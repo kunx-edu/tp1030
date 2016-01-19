@@ -118,7 +118,12 @@ class SupplierController extends \Think\Controller {
      */
     public function changeStatus($id, $status = -1) {
         $model = D('Supplier');
-        $flag  = $model->where(array('id' => $id))->setField('status', $status);
+        $data = array('status'=> $status);
+        //update xxx set money=money+100 where id=1
+        if($status==-1){
+            $data['name']=array('exp','concat(name,"_del")');
+        }
+        $flag  = $model->where(array('id' => $id))->setField($data);
         if ($flag) {
             $this->success('修改成功');
         } else {
