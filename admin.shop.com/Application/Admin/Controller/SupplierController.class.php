@@ -31,13 +31,16 @@ class SupplierController extends \Think\Controller {
     /**
      * 供货商列表.
      */
-    public function index() {
+    public function index($keyword = '') {
 
         //1.创建模型
         $model           = D('Supplier');
         //2.获取数据
         $where['status'] = array('egt', 0);
-        $rows            = $model->where($where)->select();
+        if ($keyword) {
+            $where['name'] = array('like', $keyword . '%');
+        }
+        $rows = $model->where($where)->select();
         /*
           //4.为了展示对错图标，我们需要处理status字段
           foreach($rows as $key=>$row){
@@ -50,6 +53,7 @@ class SupplierController extends \Think\Controller {
          */
         //3.展示数据
         $this->assign('rows', $rows);
+        $this->assign('keyword', $keyword);
 //        $this->assign('meta_title','供货商管理');
         $this->display();
     }
@@ -91,12 +95,12 @@ class SupplierController extends \Think\Controller {
         $model = D('Supplier');
         if (IS_POST) {
             if ($model->create()) {
-                if($model->save()!==false){
-                    $this->success('修改成功',U('index'));
-                }else{
+                if ($model->save() !== false) {
+                    $this->success('修改成功', U('index'));
+                } else {
                     $this->error('修改失败');
                 }
-            }else{
+            } else {
                 $this->error(get_errors($model->getError()));
             }
         } else {
@@ -112,12 +116,12 @@ class SupplierController extends \Think\Controller {
      * @param type $id
      * @param type $status
      */
-    public function changeStatus($id,$status=-1){
+    public function changeStatus($id, $status = -1) {
         $model = D('Supplier');
-        $flag = $model->where(array('id'=>$id))->setField('status', $status);
-        if($flag) {
+        $flag  = $model->where(array('id' => $id))->setField('status', $status);
+        if ($flag) {
             $this->success('修改成功');
-        }else{
+        } else {
             $this->error('修改失败');
         }
     }
