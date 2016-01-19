@@ -7,5 +7,10 @@ namespace Admin\Model;
  * @author kunx
  */
 class SupplierModel extends \Think\Model{
-    //put your code here
+    protected $patchValidate = true;//开启批量验证
+    protected $_validate = array(
+        array('name','require','供应商名称不能为空',self::MUST_VALIDATE),
+        array('status',array(0,1,-1),'供应商状态不合法',self::MUST_VALIDATE,'in'),
+        array('name','','供应商名字不能重复',self::EXISTS_VALIDATE,'unique'),
+    );
 }
