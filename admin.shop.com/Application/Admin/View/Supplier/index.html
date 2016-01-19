@@ -39,7 +39,7 @@
                         <td align="center">{$row.intro}</td>
                         <td align="center">{$row.sort}</td>
                         <!--<td align="center"><img src="__IMG__/{/*$row.enable*/}" /></td>-->
-                        <td align="center"><img src="__IMG__/{$row.status}.gif" /></td>
+                        <td align="center"><img style="cursor: pointer;" src="__IMG__/{$row.status}.gif" onclick="location.href='{:U('changeStatus',array('id'=>$row['id'],'status'=>1-$row['status']))}'"/></td>
                         <td align="center">
                             <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
                             <a href="{:U('delete',array('id'=>$row['id']))}" title="移除">移除</a> 
