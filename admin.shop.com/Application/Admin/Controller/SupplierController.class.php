@@ -108,18 +108,17 @@ class SupplierController extends \Think\Controller {
     }
 
     /**
-     * 删除供货商
+     * 修改供应商的状态，删除也是修改状态，所以可以都使用
+     * @param type $id
+     * @param type $status
      */
-    public function delete($id) {
-        //直接根据id进行修改操作即可
+    public function changeStatus($id,$status=-1){
         $model = D('Supplier');
-//        $model->delete($id);
-//        $model->save();
-        $flag = $model->where(array('id'=>$id))->setField('status', -1);
+        $flag = $model->where(array('id'=>$id))->setField('status', $status);
         if($flag) {
-            $this->success('删除成功');
+            $this->success('修改成功');
         }else{
-            $this->error('删除失败');
+            $this->error('修改失败');
         }
     }
 
