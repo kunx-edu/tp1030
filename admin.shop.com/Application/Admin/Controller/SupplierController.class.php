@@ -110,8 +110,17 @@ class SupplierController extends \Think\Controller {
     /**
      * 删除供货商
      */
-    public function delete() {
-        
+    public function delete($id) {
+        //直接根据id进行修改操作即可
+        $model = D('Supplier');
+//        $model->delete($id);
+//        $model->save();
+        $flag = $model->where(array('id'=>$id))->setField('status', -1);
+        if($flag) {
+            $this->success('删除成功');
+        }else{
+            $this->error('删除失败');
+        }
     }
 
 }
