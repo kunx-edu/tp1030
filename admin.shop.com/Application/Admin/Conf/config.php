@@ -21,4 +21,5 @@ return array(
     'DB_DEBUG'  			=>  TRUE, // 数据库调试模式 开启后可以记录SQL日志
     'DB_CHARSET'            =>  'utf8',      // 数据库编码默认采用utf8
     'SHOW_PAGE_TRACE'=>TRUE,
+    'PAGE_SIZE'=>2,
 );

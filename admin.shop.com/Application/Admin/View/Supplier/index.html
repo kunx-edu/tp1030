@@ -6,6 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
         <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+        <css href="__CSS__/page.css" />
     </head>
     <body>
         <h1>
@@ -46,6 +47,13 @@
                         </td>
                     </tr>
                     </foreach>
+                    <tr>
+                        <td align="right" nowrap="true" colspan="6">
+                            <div id="turn-page" class="page">
+                                {$page_html}
+                            </div>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </form>
