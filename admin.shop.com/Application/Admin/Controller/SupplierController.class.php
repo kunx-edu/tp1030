@@ -62,20 +62,21 @@ class SupplierController extends \Think\Controller {
         if (IS_POST) {
             $model = D('Supplier');
             //1.1判断数据是否合法create
-            if($model->create()){
+            if ($model->create()) {
                 //1.2插入数据
-                if($model->add()!== false){
-                    $this->success('插入成功',U('index'));
-                }else{
+                if ($model->add() !== false) {
+                    $this->success('插入成功', U('index'));
+                } else {
                     $this->error('插入失败');
                 }
-            }else{
-                $errors = '<ul>';
-                foreach ($model->getError() as $error){
-                    $errors .= '<li>'.$error.'</li>';
-                }
-                $errors .= '</ul>';
-                $this->error($errors);
+            } else {
+//                $errors = '<ul>';
+//                foreach ($model->getError() as $error) {
+//                    $errors .= '<li>' . $error . '</li>';
+//                }
+//                $errors .= '</ul>';
+//                $this->error($errors);
+                $this->error(get_errors($model->getError()));
             }
         } else {
             //2.如果不是就展示
@@ -87,11 +88,23 @@ class SupplierController extends \Think\Controller {
      * 修改供货商
      */
     public function edit($id) {
-        //1.根据id获取数据表中的数据
         $model = D('Supplier');
-        $row = $model->find($id);
-        $this->assign('row', $row);
-        $this->display();
+        if (IS_POST) {
+            if ($model->create()) {
+                if($model->save()!==false){
+                    $this->success('修改成功',U('index'));
+                }else{
+                    $this->error('修改失败');
+                }
+            }else{
+                $this->error(get_errors($model->getError()));
+            }
+        } else {
+            //1.根据id获取数据表中的数据
+            $row = $model->find($id);
+            $this->assign('row', $row);
+            $this->display();
+        }
     }
 
     /**
