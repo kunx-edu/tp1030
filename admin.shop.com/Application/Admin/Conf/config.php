@@ -7,6 +7,7 @@ return array(
         '__CSS__' => DOMAIN . 'Public/css',
         '__JS__'  => DOMAIN . 'Public/js',
         '__IMG__' => DOMAIN . 'Public/img',
+        '__EXT__' => DOMAIN . 'Public/ext',
     ),
     /* 数据库设置 */
     'DB_TYPE'           => 'mysql', // 数据库类型
@@ -23,5 +24,5 @@ return array(
     'DB_CHARSET'        => 'utf8', // 数据库编码默认采用utf8
     'SHOW_PAGE_TRACE'   => TRUE,
     'PAGE_SIZE'         => 2,
-    'PAGE_THEME'=>'%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
+    'PAGE_THEME'        => '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
 );

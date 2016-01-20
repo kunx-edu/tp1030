@@ -63,6 +63,7 @@
             版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
         </div>
         <js href='__JS__/jquery.min.js'/>
+        <js href='__EXT__/layer/layer.js'/>
         <script type='text/javascript'>
             $(function(){
                 //给状态图片添加点击事件
@@ -87,6 +88,15 @@
                             //并且切换提示图标
                             ele.attr('data',new_status);
                             ele.attr('src','__IMG__/'+new_status+'.gif');
+                            layer.msg(data.info,{
+                                time:1000,
+                                icon:1,
+                            });
+                        }else{
+                            layer.msg(data.info,{
+                                time:1000,
+                                icon:2,
+                            });
                         }
                     });
                 });
