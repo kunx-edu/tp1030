@@ -100,13 +100,21 @@ class BrandController extends \Think\Controller {
     }
 
     public function changeStatus($id,$status=-1) {
+//        dump($id);
+//        exit;
         //1.如果status是-1，那么就将原来的名字后添加_del
-        if($status==-1){
-            $data['name'] = array('exp','concat(name,"_del")');
-        }
-        $data['status']=$status;
-        //2.执行数据的更新操作。
-        if(D('Brand')->where(array('id'=>$id))->setField($data) !== false){
+//        if($status==-1){
+//            $data['name'] = array('exp','concat(name,"_del")');
+//        }
+//        $data['status']=$status;
+//        //2.执行数据的更新操作。
+//        if(D('Brand')->where(array('id'=>array('in',$id)))->setField($data) !== false){
+//            $this->success('操作成功',  cookie('forward'));
+//        }else{
+//            $this->error('操作失败');
+//        }
+        $model = D('Brand');
+        if($model->changeStatus($id,$status)!==false){
             $this->success('操作成功',  cookie('forward'));
         }else{
             $this->error('操作失败');
