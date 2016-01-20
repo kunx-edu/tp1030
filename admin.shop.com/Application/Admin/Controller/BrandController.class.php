@@ -106,7 +106,7 @@ class BrandController extends \Think\Controller {
         }
         $data['status']=$status;
         //2.执行数据的更新操作。
-        if(D('Brand')->where(array('id'=>$id))->setField($data)){
+        if(D('Brand')->where(array('id'=>$id))->setField($data) !== false){
             $this->success('操作成功',  cookie('forward'));
         }else{
             $this->error('操作失败');
