@@ -48,7 +48,7 @@ class SupplierController extends \Think\Controller {
         //5.2获取分页html代码
         $size = C('PAGE_SIZE')?C('PAGE_SIZE'):10;
         $page = new \Think\Page($count, $size);
-        $page->setConfig('theme', '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
+        $page->setConfig('theme', C('PAGE_THEME'));
         $page_html = $page->show();
         
         $rows = $model->where($where)->page(I('get.p',1),$size)->select();

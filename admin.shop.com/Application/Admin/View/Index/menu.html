@@ -72,7 +72,7 @@ body {
   cursor:pointer;
 }
 #main-div a:visited, #menu-list a:link, #menu-list a:hover {
-  color:#335B64
+  color:#335B64;
   text-decoration:none;
 }
 #menu-list a:active {
@@ -131,6 +131,14 @@ body {
                     <li class="menu-item"><a href="categoryList.html" target="main-frame">商品分类</a></li>
                     <li class="menu-item"><a href="brandList.html" target="main-frame">商品品牌</a></li>
                     <li class="menu-item"><a href="goodsTrash.html" target="main-frame">商品回收站</a></li>
+                </ul>
+            </li>
+            
+            <li class="explode" key="02_cat_and_goods" name="menu">
+            品牌管理
+                <ul>
+                    <li class="menu-item"><a href="{:U('Brand/index')}" target="main-frame">品牌列表</a></li>
+                    <li class="menu-item"><a href="{:U('Brand/add')}" target="main-frame">添加新品牌</a></li>
                 </ul>
             </li>
             

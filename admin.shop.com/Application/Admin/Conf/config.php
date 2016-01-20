@@ -23,4 +23,5 @@ return array(
     'DB_CHARSET'        => 'utf8', // 数据库编码默认采用utf8
     'SHOW_PAGE_TRACE'   => TRUE,
     'PAGE_SIZE'         => 2,
+    'PAGE_THEME'=>'%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
 );
