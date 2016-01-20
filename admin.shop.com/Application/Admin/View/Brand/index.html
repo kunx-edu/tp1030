@@ -119,9 +119,9 @@
                 //点击删除按钮的时候，将所有选中的的状态置为-1
                 $('.delete_all').click(function(){
                     var data = $('.select_item').serialize();
-                    console.debug(data);
+//                    console.debug(data);
                     $.post(url,data,function(data){
-                        console.debug(data);
+//                        console.debug(data);
                         if(data.status){
                             //msg里面可以写一个回调函数，该函数是在弹出执行完才执行的
                             layer.msg(data.info,{ time:2000,icon:1},function(){
