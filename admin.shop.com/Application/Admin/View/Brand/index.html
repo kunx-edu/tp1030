@@ -40,11 +40,11 @@
                         </td>
                         <td align="center">{$row.intro}</td>
                         <td align="center">{$row.sort}</td>
-                        <!--<td align="center"><img src="__IMG__/{/*$row.enable*/}" /></td>-->
                         <td align="center"><img style="cursor: pointer;" src="__IMG__/{$row.status}.gif" class="status" href="{:U('changeStatus',array('id'=>$row['id']))}" data="{$row.status}"/></td>
                         <td align="center">
                             <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
-                            <a href="{:U('changeStatus',array('id'=>$row['id']))}" title="移除">移除</a> 
+                            <!--<a href="{:U('changeStatus',array('id'=>$row['id']))}" title="移除">移除</a>--> 
+                            <a href="javascript:;" data="{$row['id']}" class="delete" title="移除">移除</a> 
                         </td>
                     </tr>
                     </foreach>
@@ -78,12 +78,6 @@
                         console.debug(data);
                         //判断是否成功，如果成功data中的status值就是1
                         if(data.status == 1){
-//                            ele.attr('src','__IMG__/'+data.status+'.gif');
-//                            ele.attr('src',function(i,v){
-//                                console.debug(i,v);
-//                            });
-//                            ele.attr('data',1 - ele.attr('data'));
-//                            ele.attr('src','__IMG__/'+ele.attr('data')+'.gif');
                             //将data属性的值设置为新的状态
                             //并且切换提示图标
                             ele.attr('data',new_status);
@@ -97,6 +91,24 @@
                                 time:1000,
                                 icon:2,
                             });
+                        }
+                    });
+                });
+                
+                //当点击移除的时候进行ajax post移除
+                $('.delete').click(function(){
+                    var ele = $(this);
+                    var id = ele.attr('data');
+                    var url = '{:U("changeStatus")}';
+//                    var data = { id:id};
+//                    console.debug(data);
+                    $.post(url,{ id:id},function(data){
+                        if(data.status){
+                            layer.msg(data.info,{ time:2000,icon:1},function(){
+                                location.reload();
+                            });
+                        }else{
+                            layer.msg(data.info,{ time:2000,icon:2});
                         }
                     });
                 });
