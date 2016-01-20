@@ -24,6 +24,8 @@ class BrandController extends \Think\Controller {
     }
 
     public function index($keyword = '') {
+        //6.记录页面地址，便于后续的编辑、修改、删除的跳转
+        cookie('forward',__SELF__);
         //1.判断是否有搜索
         //2.如果有搜索，就拼凑关键字条件
 //        $keyword = I('get.keyword','');
@@ -82,7 +84,7 @@ class BrandController extends \Think\Controller {
             //1.1检查数据是否合法
             if($model->create()){
                 if($model->save()){
-                    $this->success('修改成功',U('index'));
+                    $this->success('修改成功',cookie('forward'));
                 }else{
                     $this->error(get_errors($model->getError()));
                 }
@@ -97,8 +99,49 @@ class BrandController extends \Think\Controller {
         }
     }
 
-    public function delete() {
-        $this->display();
+    public function changeStatus($id,$status=-1) {
+        //1.如果status是-1，那么就将原来的名字后添加_del
+        if($status==-1){
+            $data['name'] = array('exp','concat(name,"_del")');
+        }
+        $data['status']=$status;
+        //2.执行数据的更新操作。
+        if(D('Brand')->where(array('id'=>$id))->setField($data)){
+            $this->success('操作成功',  cookie('forward'));
+        }else{
+            $this->error('操作失败');
+        }
     }
 
+    /**
+     * 批量添加品牌。
+     * 表单中一行就是一个记录，字段之间使用 制表符 分割
+     */
+    public function patchAdd(){
+        if(IS_POST){
+            $content = I('post.content');
+            $rows = explode("\n", $content);
+            $data = array();
+            foreach($rows as $row){
+                $tmp = explode("\t", $row);
+                if(!trim($tmp[0])){
+                    continue;
+                }
+                $data[] = array(
+                    'name'=>$tmp[0],
+                    'intro'=>$tmp[1],
+                    'sort'=>$tmp[2],
+                    'status'=>$tmp[3],
+                );
+            }
+            $model = D('Brand');
+            if($model->addAll($data)){
+                $this->success('成功',U('index'));
+            }else{
+                $this->error('失败');
+            }
+        }else{
+            $this->display('patch_add');
+        }
+    }
 }
