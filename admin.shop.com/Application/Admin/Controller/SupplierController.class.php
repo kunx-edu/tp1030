@@ -33,7 +33,9 @@ class SupplierController extends \Think\Controller {
      * 具备分页功能.
      */
     public function index($keyword = '') {
-
+        //记录当前页面地址，为编辑跳转做准备
+        cookie('forward',__SELF__);
+        
         //1.创建模型
         $model           = D('Supplier');
         //2.获取数据
@@ -106,7 +108,7 @@ class SupplierController extends \Think\Controller {
         if (IS_POST) {
             if ($model->create()) {
                 if ($model->save() !== false) {
-                    $this->success('修改成功', U('index'));
+                    $this->success('修改成功', cookie('forward'));
                 } else {
                     $this->error('修改失败');
                 }
