@@ -33,6 +33,7 @@ class BrandController extends \Think\Controller {
             $where['name'] = array('like', $keyword . '%');
         }
         $where['status'] = array('egt', 0);
+        $p = I('get.p', 1);
 
         $model = D('Brand');
         $count = $model->where($where)->count(); //获取总行数
@@ -46,11 +47,12 @@ class BrandController extends \Think\Controller {
         } else {
             $page_html = '';
         }
-        $rows = $model->where($where)->page(I('get.p', 1), $size)->select(); //获取结果集
+        $rows = $model->where($where)->page($p, $size)->select(); //获取结果集
         //5.传递数据
         $this->assign('page_html', $page_html);
         $this->assign('rows', $rows);
         $this->assign('keyword', $keyword);
+        $this->assign('page', $p);
         $this->display();
     }
 
@@ -151,5 +153,40 @@ class BrandController extends \Think\Controller {
         }else{
             $this->display('patch_add');
         }
+    }
+    
+    
+    public function getListByAjax($keyword = ''){
+        if ($keyword) {
+            $where['name'] = array('like', $keyword . '%');
+        }
+        $where['status'] = array('egt', 0);
+
+        $model = D('Brand');
+        $count = $model->where($where)->count(); //获取总行数
+        //3.分页
+        $size  = C('PAGE_SIZE') ? C('PAGE_SIZE') : 10;
+        if ($count > $size) {
+            $page      = new \Think\Page($count, $size);
+            //4.获取分页代码
+            $page->setConfig('theme', C('PAGE_THEME')); //获取统一翻页样式
+            $page_html = $page->show(); //获取分页代码
+        } else {
+            $page_html = '';
+        }
+        $rows = $model->where($where)->page(I('get.p', 1), $size)->select(); //获取结果集
+        //data用于交给ajax，其中的data元素是品牌列表的具体数据
+        $data = array();
+        foreach($rows as $row){
+            $data[] = array_merge($row,array(
+                'edit_url'=> U('edit',array('id'=>$row['id'])),
+                'change_status_url'=>U('changeStatus',array('id'=>$row['id'])),
+            ));
+        }
+        $data = array(
+            'data'=>$data,
+            'page_html'=>$page_html,
+        );
+        echo json_encode($data);
     }
 }
