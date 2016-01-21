@@ -18,32 +18,7 @@
 <div class="main-div">
     <form method="post" action="{:U()}"enctype="multipart/form-data" >
         <table cellspacing="1" cellpadding="3" width="100%">
-            <tr>
-                <td class="label">品牌名称</td>
-                <td>
-                    <input type="text" name="name" maxlength="60" value="{$row.name}" />
-                    <span class="require-field">*</span>
-                </td>
-            </tr>
-            <tr>
-                <td class="label">品牌描述</td>
-                <td>
-                    <textarea  name="intro" cols="60" rows="4"  >{$row.intro}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="label">排序</td>
-                <td>
-                    <input type="text" name="sort" maxlength="40" size="15" value="{$row.sort|default=20}" />
-                </td>
-            </tr>
-            <tr>
-                <td class="label">是否显示</td>
-                <td>
-                    <input type="radio" class="status" name="status" value="1" /> 是
-                    <input type="radio" class="status" name="status" value="0" /> 否
-                </td>
-            </tr>
+            %table%
             <tr>
                 <td colspan="2" align="center"><br />
                     <input type="hidden" name="id" value="{$row.id}" />

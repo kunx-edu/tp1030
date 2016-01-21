@@ -10,6 +10,7 @@
     </head>
     <body>
         <h1>
+            <span class="action-span"><a href="{:U('patchAdd')}">批量添加品牌</a></span>
             <span class="action-span"><a href="{:U('add')}">添加品牌</a></span>
             <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
             <span id="search_id" class="action-span1"> - {$meta_title} </span>
@@ -29,7 +30,9 @@
                         %thead%
                     </tr>
                     <tbody class="list-data">
-                        %tbody%
+                    <foreach name="rows" item="row">
+                    %tbody%
+                    </foreach>
                     </tbody>
                     <tr>
                         <td align="right" nowrap="true" colspan="6">
@@ -44,5 +47,10 @@
         <div id="footer">
             版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
         </div>
+        <js href='__JS__/jquery.min.js'/>
+        <js href='__EXT__/layer/layer.js'/>
+        <script type='text/javascript'>
+            $(function(){
+            });
+        </script>
     </body>
-</html>
