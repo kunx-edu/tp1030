@@ -25,4 +25,5 @@ return array(
     'SHOW_PAGE_TRACE'   => TRUE,
     'PAGE_SIZE'         => 4,
     'PAGE_THEME'        => '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
+    'UPLOAD_PATH'       => APP_PATH . 'Uploads/',
 );

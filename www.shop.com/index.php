@@ -18,7 +18,7 @@ if (version_compare(PHP_VERSION, '5.3.0', '<'))
 define('APP_DEBUG', True);
 
 
-define('BIND_MODULE', 'Admin');
+//define('BIND_MODULE', 'Admin');
 define('ROOT_PATH', __DIR__);
 //定义运行时目录
 define('RUNTIME_PATH', ROOT_PATH . '/Runtime/');
