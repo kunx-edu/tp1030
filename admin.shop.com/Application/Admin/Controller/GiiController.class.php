@@ -40,8 +40,12 @@ class GiiController extends \Think\Controller {
     public function buildModel() {
         //1.如果用户提交了表单
         if (IS_POST) {
-            $model      = M('goods_type');
-            $table_info = $model->query('SHOW FULL COLUMNS FROM goods_type');
+            //1.1引入控制器模板，替换特定字符串
+            $name        = I('post.name');
+            $module      = I('post.module');
+            $title       = I('post.title');
+            $model      = M();
+            $table_info = $model->query('SHOW FULL COLUMNS FROM ' . parse_name($name,0));
             $rules = array();
             foreach ($table_info as $info) {
                 $comment = $info['comment'];
@@ -72,15 +76,7 @@ class GiiController extends \Think\Controller {
                 }
             }
             $rules = implode(",\r\n\t", $rules);
-//            $rules = "\t" . $rules;
-//            echo $rule;
-//            exit;
-//            dump($rules);
-//            exit;
-            //1.1引入控制器模板，替换特定字符串
-            $name        = I('post.name');
-            $module      = I('post.module');
-            $title       = I('post.title');
+            
             $tpl_file    = MODULE_PATH . 'View/Gii/model.tpl';
             $content     = file_get_contents($tpl_file);
             $content     = str_replace(array('%name%', '%title%', '%module%','%rules%'), array($name, $title, $module,$rules), $content);
@@ -96,4 +92,32 @@ class GiiController extends \Think\Controller {
         $this->display('build_model');
     }
 
+    
+    public function buildView(){
+        if(IS_POST){
+            //1.1引入控制器模板，替换特定字符串
+            $name        = I('post.name');
+            $module      = I('post.module');
+            $model      = M();
+            $table_info = $model->query('SHOW FULL COLUMNS FROM '.parse_name($name,0));
+            $thead = '';
+            foreach ($table_info as $info) {
+                if(!$info['comment']) {
+                    continue;
+                }
+                //表头部分
+                $thead .= '<th>' .$info['comment']. '</th>';
+                
+                //表格主体部分
+                
+            }
+            
+            
+            echo $thead;
+            exit;
+            
+        }else{
+            $this->display('build_view');
+        }
+    }
 }
