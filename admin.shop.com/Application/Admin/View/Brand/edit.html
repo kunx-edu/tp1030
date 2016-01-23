@@ -35,7 +35,11 @@
                     <tr>
                         <td class="label">品牌LOGO</td>
                         <td>
-                            <input type="file" name="logo" id="logo" placeholder="品牌LOGO"/>
+                            <input type="file" id="logo" placeholder="品牌LOGO"/>
+                            <input type="hidden" name="logo" value="{$row.logo}" class="logo-input" />
+                            <div>
+                                <img src="{$row.logo}-min" <empty name="row.logo">style="display: none;"</empty> class="logo-img"/>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -115,23 +119,22 @@
                     },
                     onUploadSuccess: function(file, data, response) {
                         console.debug('success', arguments);
+//                        return;
                         data = $.parseJSON(data);
-                        console.debug(data);
                         if (data.status) {
-                            layer.msg(data.msg,{icon:1});
-                        } else{
-                            layer.msg(data.msg,{icon:2});
-                            
+                            var file_info = $.parseJSON(data.file);
+                            var img_src = file_info.url;
+                            //将隐藏的图片预览给显示出来
+                            $('.logo-img').attr('src', img_src + '-min').show();
+                            $('.logo-input').val(img_src);
+                            console.debug(img_src);
+                            layer.msg(data.msg, {icon: 1});
+                        } else {
+                            layer.msg(data.msg, {icon: 2});
+
                         }
-                    }
-
+                    },
                 });
-
-
-
-
-
-
             });
 
 
