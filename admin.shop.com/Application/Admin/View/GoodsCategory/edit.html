@@ -39,6 +39,8 @@
                     </tr>                <tr>
                         <td class="label">父分类</td>
                         <td>
+                            <input type="text" class="cname" value="" readonly='readonly'/>
+                            <input type="hidden" name='parent_id' class='parent_id' value=""/>
                             <ul id="treeDemo" class="ztree"></ul>
                         </td>
                     </tr>                <tr>
@@ -92,14 +94,22 @@
                 data: {
                     simpleData: {
                         enable: true,
-                        pIdKey:'parent_id',
+                        pIdKey: 'parent_id',
                     }
+                },
+                callback:{
+                    onClick:function(event,ele_obj,ztree_node,click_type){
+                        $('.cname').val(ztree_node.name);//显示用户点击的是什么分类
+                        $('.parent_id').val(ztree_node.id);//将父级分类放到隐藏域中
+//                      alert(ztree_node.id+ztree_node.name);
+                    },
                 }
+                
             };
-var zNodes = {$rows};
+            var zNodes = {$rows};
 
             $(document).ready(function() {
-                $.fn.zTree.init($("#treeDemo"), setting, zNodes).expandAll(true);
+                $.fn.zTree.init($("#treeDemo"), setting, zNodes).expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
             });
         </script>
     </body>
