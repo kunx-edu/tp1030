@@ -167,10 +167,13 @@ class BrandController extends \Think\Controller {
         //3.分页
         $size  = C('PAGE_SIZE') ? C('PAGE_SIZE') : 10;
         if ($count > $size) {
-            $page      = new \Think\Page($count, $size);
+//            $page      = new \Think\Page($count, $size);
+            
+            //http://admin.shop.com/index.php/Brand/getListByAjax.html?keyword=&p=1
+            $page      = new \Admin\Logic\Page($count, $size);
             //4.获取分页代码
             $page->setConfig('theme', C('PAGE_THEME')); //获取统一翻页样式
-            $page_html = $page->show(); //获取分页代码
+            $page_html = $page->show('index'); //获取分页代码
         } else {
             $page_html = '';
         }
@@ -188,5 +191,6 @@ class BrandController extends \Think\Controller {
             'page_html'=>$page_html,
         );
         echo json_encode($data);
+        exit;
     }
 }
