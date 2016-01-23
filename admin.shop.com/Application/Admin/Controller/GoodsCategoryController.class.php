@@ -57,9 +57,11 @@ class GoodsCategoryController extends \Think\Controller {
      * 添加商品分类
      */
     public function add() {
+            $model = D('GoodsCategory');
+        //获取所有的分类信息
+        $rows = $model->where(array('status'=>array('egt',0)))->order('lft')->select();
         //1.判断是否是post提交
         if (IS_POST) {
-            $model = D('GoodsCategory');
             //1.1判断数据是否合法create
             if ($model->create()) {
                 //1.2插入数据
@@ -72,6 +74,8 @@ class GoodsCategoryController extends \Think\Controller {
                 $this->error(get_errors($model->getError()));
             }
         } else {
+            //将所有的分类传给前端模板
+            $this->assign('rows',  json_encode($rows));
             //2.如果不是就展示
             $this->display('edit');
         }
