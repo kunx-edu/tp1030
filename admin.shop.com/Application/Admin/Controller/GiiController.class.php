@@ -114,7 +114,7 @@ class GiiController extends \Think\Controller {
             $reg    = '/(.+)@(text|radio|textarea)@?(.*)/';
             
             //列表页面的，每个单元格模板
-            $index_tr_str = "<tr><td align='center'>%title%</td></tr>";
+            $index_tr_str = "<td align='center'>%title%</td>";
             foreach ($table_info as $info) {
                 if (!$info['comment']) {
                     continue;
@@ -166,6 +166,7 @@ class GiiController extends \Think\Controller {
             //生成首页
             $tpl_file    = MODULE_PATH . 'View/Gii/index.tpl';
             $content     = file_get_contents($tpl_file);
+            $tbody_index = '<tr>' . $tbody_index . '</tr>';
             $content     = str_replace(array('%thead%','%tbody%'), array($thead,$tbody_index), $content);
             $output_path = APP_PATH . $module . '/View/'.$name . '/';
             $output_file = $output_path . 'index.html';
