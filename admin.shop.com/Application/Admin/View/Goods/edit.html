@@ -1,0 +1,112 @@
+<!-- $Id: brand_info.htm 14216 2008-03-10 02:27:21Z testyang $ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ECSHOP 管理中心 - {$meta_title} </title>
+<meta name="robots" content="noindex, nofollow"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>
+    <span class="action-span"><a href="{:U('index')}">品牌管理</a></span>
+    <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - {$meta_title} </span>
+</h1>
+    <div style="clear:both"></div>
+<div class="main-div">
+    <form method="post" action="{:U()}"enctype="multipart/form-data" >
+        <table cellspacing="1" cellpadding="3" width="100%">
+                            <tr>
+                        <td class="label">名称</td>
+                        <td>
+                            <input type="text" name="name" maxlength="60" value="{$row.name}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">货号</td>
+                        <td>
+                            <input type="text" name="sn" maxlength="60" value="{$row.sn}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">商品LOGO</td>
+                        <td>
+                            <input type="text" name="logo" maxlength="60" value="{$row.logo}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">商品分类</td>
+                        <td>
+                            <input type="text" name="goods_category_id" maxlength="60" value="{$row.goods_category_id}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">品牌</td>
+                        <td>
+                            <input type="text" name="brand_id" maxlength="60" value="{$row.brand_id}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">供货商</td>
+                        <td>
+                            <input type="text" name="supplier_id" maxlength="60" value="{$row.supplier_id}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">市场价格</td>
+                        <td>
+                            <input type="text" name="market_price" maxlength="60" value="{$row.market_price}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">本店价格</td>
+                        <td>
+                            <input type="text" name="shop_price" maxlength="60" value="{$row.shop_price}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">库存</td>
+                        <td>
+                            <input type="text" name="stock" maxlength="60" value="{$row.stock}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">商品状态</td>
+                        <td>
+                            <input type="text" name="goods_status" maxlength="60" value="{$row.goods_status}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">是否上架</td>
+                        <td>
+                            <input type="text" name="is_on_sale" maxlength="60" value="{$row.is_on_sale}" />
+                        </td>
+                    </tr><tr>
+                        <td class='label'>状态</td>
+                        <td><input type='radio' name='status' value='|1'/>是 <input type='radio' name='status' value='0'/>否 </td>
+                    </tr>                <tr>
+                        <td class="label">排序</td>
+                        <td>
+                            <input type="text" name="sort" maxlength="60" value="{$row.sort}" />
+                        </td>
+                    </tr>                <tr>
+                        <td class="label">录入时间</td>
+                        <td>
+                            <input type="text" name="inputtime" maxlength="60" value="{$row.inputtime}" />
+                        </td>
+                    </tr>
+            <tr>
+                <td colspan="2" align="center"><br />
+                    <input type="hidden" name="id" value="{$row.id}" />
+                    <input type="submit" class="button" value=" 确定 " />
+                    <input type="reset" class="button" value=" 重置 " />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="footer">
+共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
+版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+</div>
+    <js href="__JS__/jquery.min.js" />
+    <script type="text/javascript">
+        $(function(){
+            $('.status').val([{$row.status|default=1}]);//选中指定的选项
+        });
+    </script>
+</body>
+</html>
