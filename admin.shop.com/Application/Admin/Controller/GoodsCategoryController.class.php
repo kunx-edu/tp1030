@@ -33,17 +33,6 @@ class GoodsCategoryController extends \Think\Controller {
         $model           = D('GoodsCategory');
         //2.获取数据
         $where['status'] = array('egt', 0);
-//        if ($keyword) {
-//            $where['name'] = array('like', $keyword . '%');
-//        }
-        //5.获取满足条件的总行数
-//        $count = $model->where($where)->count();
-        //5.2获取分页html代码
-//        $size = C('PAGE_SIZE')?C('PAGE_SIZE'):10;
-//        $page = new \Think\Page($count, $size);
-//        $page->setConfig('theme', C('PAGE_THEME'));
-//        $page_html = $page->show();
-        
 //        $rows = $model->where($where)->page(I('get.p',1),$size)->select();
         $rows = $model->where($where)->order('lft')->select();
         //3.展示数据
@@ -55,9 +44,13 @@ class GoodsCategoryController extends \Think\Controller {
 
     /**
      * 添加商品分类
+     * 
+     * 当用户新增分类的时候，提交了基本信息和父级分类id
+     * 然后，nestedsets自动帮我们计算左右节点和层级
+     * 接着调用执行sql语句的代码，进行执行并返回
      */
     public function add() {
-            $model = D('GoodsCategory');
+        $model = D('GoodsCategory');
         //获取所有的分类信息
         $rows = $model->where(array('status'=>array('egt',0)))->order('lft')->select();
         //1.判断是否是post提交
@@ -98,9 +91,25 @@ class GoodsCategoryController extends \Think\Controller {
             }
         } else {
             //1.根据id获取数据表中的数据
+            $rows = $model->where(array('status'=>array('egt',0)))->order('lft')->select();
             $row = $model->find($id);
             $this->assign('row', $row);
+            $this->assign('rows',  json_encode($rows));
             $this->display();
+        }
+    }
+    
+    /**
+     * 逻辑删除。
+     * @param type $id
+     * @param type $status
+     */
+    public function delete($id,$status=-1){
+        $model = D('GoodsCategory');
+        if($model->delete2($id)!==false){
+            $this->success('删除成功',U('index'));
+        }else{
+            $this->error('删除失败');
         }
     }
 
