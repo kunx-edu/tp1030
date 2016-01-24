@@ -116,4 +116,12 @@ class GoodsCategoryModel extends \Think\Model {
         $this->where($cond);
         return parent::save($data);
     }
+    
+    /**
+     * 获取所有的没有被删除的分类
+     * 返回json字符串，便于js使用
+     */
+    public function getList(){
+        return json_encode($this->where(array('status'=>array('egt',0)))->order('lft')->select());
+    }
 }

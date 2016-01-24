@@ -1,112 +1,289 @@
-<!-- $Id: brand_info.htm 14216 2008-03-10 02:27:21Z testyang $ -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>ECSHOP 管理中心 - {$meta_title} </title>
-<meta name="robots" content="noindex, nofollow"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
-<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<h1>
-    <span class="action-span"><a href="{:U('index')}">品牌管理</a></span>
-    <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
-    <span id="search_id" class="action-span1"> - {$meta_title} </span>
-</h1>
-    <div style="clear:both"></div>
-<div class="main-div">
-    <form method="post" action="{:U()}"enctype="multipart/form-data" >
-        <table cellspacing="1" cellpadding="3" width="100%">
-                            <tr>
-                        <td class="label">名称</td>
-                        <td>
-                            <input type="text" name="name" maxlength="60" value="{$row.name}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">货号</td>
-                        <td>
-                            <input type="text" name="sn" maxlength="60" value="{$row.sn}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">商品LOGO</td>
-                        <td>
-                            <input type="text" name="logo" maxlength="60" value="{$row.logo}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">商品分类</td>
-                        <td>
-                            <input type="text" name="goods_category_id" maxlength="60" value="{$row.goods_category_id}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">品牌</td>
-                        <td>
-                            <input type="text" name="brand_id" maxlength="60" value="{$row.brand_id}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">供货商</td>
-                        <td>
-                            <input type="text" name="supplier_id" maxlength="60" value="{$row.supplier_id}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">市场价格</td>
-                        <td>
-                            <input type="text" name="market_price" maxlength="60" value="{$row.market_price}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">本店价格</td>
-                        <td>
-                            <input type="text" name="shop_price" maxlength="60" value="{$row.shop_price}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">库存</td>
-                        <td>
-                            <input type="text" name="stock" maxlength="60" value="{$row.stock}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">商品状态</td>
-                        <td>
-                            <input type="text" name="goods_status" maxlength="60" value="{$row.goods_status}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">是否上架</td>
-                        <td>
-                            <input type="text" name="is_on_sale" maxlength="60" value="{$row.is_on_sale}" />
-                        </td>
-                    </tr><tr>
-                        <td class='label'>状态</td>
-                        <td><input type='radio' name='status' value='|1'/>是 <input type='radio' name='status' value='0'/>否 </td>
-                    </tr>                <tr>
-                        <td class="label">排序</td>
-                        <td>
-                            <input type="text" name="sort" maxlength="60" value="{$row.sort}" />
-                        </td>
-                    </tr>                <tr>
-                        <td class="label">录入时间</td>
-                        <td>
-                            <input type="text" name="inputtime" maxlength="60" value="{$row.inputtime}" />
-                        </td>
-                    </tr>
-            <tr>
-                <td colspan="2" align="center"><br />
-                    <input type="hidden" name="id" value="{$row.id}" />
-                    <input type="submit" class="button" value=" 确定 " />
-                    <input type="reset" class="button" value=" 重置 " />
-                </td>
-            </tr>
-        </table>
-    </form>
-</div>
+    <head>
+        <title>ECSHOP 管理中心 - 添加新商品 </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
+        <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+        <css href="__EXT__/ztree/css/zTreeStyle/zTreeStyle.css" />
+        <!--<css href="__EXT__/ztree/css/demo.css" />-->
+        <style type='text/css'>
+            .ztree{
+                margin-top: 10px;
+                border: 1px solid #617775;
+                background: #f0f6e4;
+                width: 220px;
+                /* height: 360px; */
+                overflow-y: scroll;
+                overflow-x: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            <span class="action-span"><a href="__GROUP__/Goods/goodsList">商品列表</a>
+            </span>
+            <span class="action-span1"><a href="__GROUP__">ECSHOP 管理中心</a></span>
+            <span id="search_id" class="action-span1"> - 添加新商品 </span>
+        </h1>
+        <div style="clear:both"></div>
 
-<div id="footer">
-共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
-版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
-</div>
-    <js href="__JS__/jquery.min.js" />
-    <script type="text/javascript">
-        $(function(){
-            $('.status').val([{$row.status|default=1}]);//选中指定的选项
-        });
-    </script>
-</body>
+        <div class="tab-div">
+            <div id="tabbar-div">
+                <p>
+                    <span class="tab-front">通用信息</span>
+                    <span class="tab-back">详细描述</span>
+                    <span class="tab-back">商品属性</span>
+                    <span class="tab-back">商品相册</span>
+                    <span class="tab-back">关联文章</span>
+                </p>
+            </div>
+            <div >
+                <form enctype="multipart/form-data" action="__GROUP__/Goods/goodsAdd" method="post" id="tabbody-div">
+                    <table width="90%" id="general-table" align="center">
+                        <tr>
+                            <td class="label">商品名称：</td>
+                            <td><input type="text" name="goods_name" value=""size="30" />
+                                <span class="require-field">*</span></td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品货号： </td>
+                            <td>
+                                <input type="text" name="goods_sn" value="" size="20"/>
+                                <span id="goods_sn_notice"></span><br />
+                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品分类：</td>
+                            <td>
+                                <input type="text" class="cname" value="请选择" readonly='readonly'/>
+                                <input type="hidden" name='parent_id' class='parent_id' value="{$row.parent_id|default=0}"/>
+                                <ul id='treeDemo' class='ztree'></ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品品牌：</td>
+                            <td>
+                                <select name="brand_id">
+                                    <option value="0">请选择...</option>
+                                    <foreach name="brand_list" item="val">
+                                        <option value="<{$val.brand_id}>"><{$val.brand_name}></option>
+                                    </foreach>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">本店售价：</td>
+                            <td>
+                                <input type="text" name="shop_price" value="0" size="20"/>
+                                <span class="require-field">*</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品数量：</td>
+                            <td>
+                                <input type="text" name="goods_number" size="8" value=""/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">是否上架：</td>
+                            <td>
+                                <input type="radio" name="is_onsale" value="1"/> 是
+                                <input type="radio" name="is_onsale" value="0"/> 否
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">加入推荐：</td>
+                            <td>
+                                <input type="checkbox" name="is_best" value="1" /> 精品 
+                                <input type="checkbox" name="is_new" value="1" /> 新品 
+                                <input type="checkbox" name="is_hot" value="1" /> 热销
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">推荐排序：</td>
+                            <td>
+                                <input type="text" name="sort_order" size="5" value="100"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">市场售价：</td>
+                            <td>
+                                <input type="text" name="market_price" value="0" size="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品关键词：</td>
+                            <td>
+                                <input type="text" name="keywords" value="" size="40" /> 用空格分隔
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品图片：</td>
+                            <td>
+                                <input type="file" name="goods_img" size="35" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品简单描述：</td>
+                            <td>
+                                <textarea name="goods_brief" cols="40" rows="3"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <!--详细描述-->
+                    <table width="90%" id="general-table" align="center" style="display: none;">
+                        <tr>
+                            <td colspan="2">
+                                <textarea id='editor'></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <!--商品属性-->
+                    <table width="90%" id="general-table" align="center" style="display: none;">
+                        <tr>
+                            <td class="label">商品名称：</td>
+                            <td><input type="text" name="goods_name" value=""size="30" />
+                                <span class="require-field">*</span></td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品货号： </td>
+                            <td>
+                                <input type="text" name="goods_sn" value="" size="20"/>
+                                <span id="goods_sn_notice"></span><br />
+                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <!--商品相册-->
+                    <table width="90%" id="general-table" align="center" style="display: none;">
+                        <tr>
+                            <td class="label">商品名称：</td>
+                            <td><input type="text" name="goods_name" value=""size="30" />
+                                <span class="require-field">*</span></td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品货号： </td>
+                            <td>
+                                <input type="text" name="goods_sn" value="" size="20"/>
+                                <span id="goods_sn_notice"></span><br />
+                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                    <!--关联文章-->
+                    <table width="90%" id="general-table" align="center" style="display: none;">
+                        <tr>
+                            <td class="label">商品名称：</td>
+                            <td><input type="text" name="goods_name" value=""size="30" />
+                                <span class="require-field">*</span></td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品货号： </td>
+                            <td>
+                                <input type="text" name="goods_sn" value="" size="20"/>
+                                <span id="goods_sn_notice"></span><br />
+                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                    <div class="button-div">
+                        <input type="submit" value=" 确定 " class="button"/>
+                        <input type="reset" value=" 重置 " class="button" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="footer">
+            共执行 9 个查询，用时 0.025161 秒，Gzip 已禁用，内存占用 3.258 MB<br />
+            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+        </div>
+        <js href='__JS__/jquery.min.js'/>
+        <js href='__EXT__/ue/my.config.js'/>
+        <js href='__EXT__/ue/ueditor.all.min.js'/>
+        <js href="__EXT__/ztree/js/jquery.ztree.core-3.5.js" />
+        <js href="__EXT__/layer/layer.js" />
+        <script type='text/javascript'>
+            //当网页加载完后自动执行
+            $(function() {
+                //1.标签的切换功能
+                //1.1在所有的标签上添加事件
+                $('#tabbar-div span').click(function() {
+                    //1.2隐藏所有的标签
+                    $('#tabbar-div span').removeClass('tab-front');
+                    $('#tabbar-div span').addClass('tab-back');
+
+                    //1.3显示当前点击的标签
+                    $(this).removeClass('tab-back');
+                    $(this).addClass('tab-front');
+//                     alert(1);
+
+                    //2.对关联的table进行展示和隐藏
+                    //2.1隐藏所有的table
+                    $('#tabbody-div>table').hide();
+                    //2.2显示选中的标签对应的table
+                    //2.2.1通过索引位置来添加
+                    //找到span的索引位置
+                    var index = $(this).index();
+                    console.debug(index);
+                    $('#tabbody-div>table').eq(index).show();
+                });
+
+
+                //初始化富文本编辑器
+                UE.getEditor('editor');
+
+
+                //商品分类使用ztree展示
+
+                var setting = {
+                    data: {
+                        simpleData: {
+                            enable: true,
+                            pIdKey: 'parent_id',
+                        }
+                    },
+                    callback: {
+                        onClick: function(event, ele_obj, ztree_node, click_type) {
+                            $('.cname').val(ztree_node.name);//显示用户点击的是什么分类
+                            $('.parent_id').val(ztree_node.id);//将父级分类放到隐藏域中
+//                      alert(ztree_node.id+ztree_node.name);
+                        },
+                        beforeClick:function(tree_id,tree_node,flag){
+                            if(tree_node.isParent){
+//                                alert('不能选择枝干节点');
+                                layer.msg('只能选择叶子节点',function(){});
+                                return false;
+                            }else{
+                                return true;
+                            }
+                        },
+                    }
+
+                };
+                var zNodes = {$categorys};
+
+                $(document).ready(function() {
+                    //如果是新增，就展开所有，如果是编辑，只展开到父级分类就可以了
+                    var tree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                    tree_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
+                });
+            });
+
+        </script>
+    </body>
 </html>
