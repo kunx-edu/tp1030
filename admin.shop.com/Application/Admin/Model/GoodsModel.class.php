@@ -9,7 +9,7 @@ class GoodsModel extends \Think\Model{
     protected $patchValidate = true;//开启批量验证
     protected $_validate = array(
         array('name','require','名称不能为空'),
-	array('sn','require','货号不能为空'),
+//	array('sn','require','货号不能为空'),
 	array('logo','require','商品LOGO不能为空'),
 	array('goods_category_id','require','商品分类不能为空'),
 	array('brand_id','require','品牌不能为空'),
@@ -17,13 +17,22 @@ class GoodsModel extends \Think\Model{
 	array('market_price','require','市场价格不能为空'),
 	array('shop_price','require','本店价格不能为空'),
 	array('stock','require','库存不能为空'),
-	array('goods_status','require','商品状态不能为空'),
+//	array('goods_status','require','商品状态不能为空'),
 	array('is_on_sale','require','是否上架不能为空'),
 	array('status','require','状态@radio|1=是&0=否不能为空'),
 	array('sort','require','排序不能为空'),
-	array('inputtime','require','录入时间不能为空')
     );
     
+    /**
+     * 调用create的时候，自动完成的操作
+     * @var type 
+     */
+    protected $_auto = array(
+        array('goods_status','array_sum',3,'function'),//对于goods_status字段进行求并集运算
+        array('inputtime',NOW_TIME),//插入的时候自动设定当前时间
+    );
+
+
     /**
      * @param int|array $id
      * @param int $status

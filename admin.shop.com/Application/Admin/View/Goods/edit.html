@@ -39,7 +39,7 @@
                 </p>
             </div>
             <div >
-                <form enctype="multipart/form-data" action="__GROUP__/Goods/goodsAdd" method="post" id="tabbody-div">
+                <form enctype="multipart/form-data" action="{:U()}" method="post" id="tabbody-div">
                     <table width="90%" id="general-table" align="center">
                         <tr>
                             <td class="label">商品名称：</td>
@@ -97,9 +97,9 @@
                         <tr>
                             <td class="label">商品状态：</td>
                             <td>
-                                <input type="checkbox" name="is_best" value="1" /> 精品 
-                                <input type="checkbox" name="is_new" value="2" /> 新品 
-                                <input type="checkbox" name="is_hot" value="4" /> 热销
+                                <input type="checkbox" name="goods_status[]" value="1" /> 精品 
+                                <input type="checkbox" name="goods_status[]" value="2" /> 新品 
+                                <input type="checkbox" name="goods_status[]" value="4" /> 热销
                             </td>
                         </tr>
                         <tr>
