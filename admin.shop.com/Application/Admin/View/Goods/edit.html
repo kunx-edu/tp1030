@@ -6,6 +6,7 @@
         <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
         <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
         <css href="__EXT__/ztree/css/zTreeStyle/zTreeStyle.css" />
+        <css href="__CSS__/common.css" />
         <!--<css href="__EXT__/ztree/css/demo.css" />-->
         <style type='text/css'>
             .ztree{
@@ -67,6 +68,16 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="label">商品图片：</td>
+                            <td>
+                                <input type="file" name="logo" id="logo" size="35" />
+                                <input type="hidden" name="logo" value="{$row.logo}" class="logo-input" />
+                                <div>
+                                    <img src="{$row.logo}-min" <empty name="row.logo">style="display: none;"</empty> class="logo-img"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="label">本店售价：</td>
                             <td>
                                 <input type="text" name="shop_price" value="{$row.shop_price}" size="20"/>
@@ -106,24 +117,19 @@
                                 <input type="text" name="market_price" value="{$row.market_price}" size="20" />
                             </td>
                         </tr>
-<!--                        <tr>
-                            <td class="label">商品关键词：</td>
-                            <td>
-                                <input type="text" name="keywords" value="" size="40" /> 用空格分隔
-                            </td>
-                        </tr>-->
-                        <tr>
-                            <td class="label">商品图片：</td>
-                            <td>
-                                <input type="file" name="logo" size="35" />
-                            </td>
-                        </tr>
-<!--                        <tr>
-                            <td class="label">商品简单描述：</td>
-                            <td>
-                                <textarea name="goods_brief" cols="40" rows="3"></textarea>
-                            </td>
-                        </tr>-->
+                        <!--                        <tr>
+                                                    <td class="label">商品关键词：</td>
+                                                    <td>
+                                                        <input type="text" name="keywords" value="" size="40" /> 用空格分隔
+                                                    </td>
+                                                </tr>-->
+
+                        <!--                        <tr>
+                                                    <td class="label">商品简单描述：</td>
+                                                    <td>
+                                                        <textarea name="goods_brief" cols="40" rows="3"></textarea>
+                                                    </td>
+                                                </tr>-->
                     </table>
 
 
@@ -207,6 +213,7 @@
             版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
         </div>
         <js href='__JS__/jquery.min.js'/>
+        <js href='__EXT__/uploadify/jquery.uploadify.min.js'/>
         <js href='__EXT__/ue/my.config.js'/>
         <js href='__EXT__/ue/ueditor.all.min.js'/>
         <js href="__EXT__/ztree/js/jquery.ztree.core-3.5.js" />
@@ -257,12 +264,13 @@
                             $('.parent_id').val(ztree_node.id);//将父级分类放到隐藏域中
 //                      alert(ztree_node.id+ztree_node.name);
                         },
-                        beforeClick:function(tree_id,tree_node,flag){
-                            if(tree_node.isParent){
+                        beforeClick: function(tree_id, tree_node, flag) {
+                            if (tree_node.isParent) {
 //                                alert('不能选择枝干节点');
-                                layer.msg('只能选择叶子节点',function(){});
+                                layer.msg('只能选择叶子节点', function() {
+                                });
                                 return false;
-                            }else{
+                            } else {
                                 return true;
                             }
                         },
@@ -273,37 +281,93 @@
 
                 //如果是新增，就展开所有，如果是编辑，只展开到父级分类就可以了
                 var tree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-                <empty name="row.id">
-                    tree_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
-                <else />
-                    //找到分类节点
-                    var cartery_node = tree_obj.getNodeByParam('id',{$row.goods_category_id});
-                    //选中这个节点
-                    tree_obj.selectNode(cartery_node);{/*选中父级分类节点*/}
-                    console.debug(cartery_node);
-                    $('.cname').val(cartery_node.name);{/*显示用户点击的是什么分类*/}
-                    $('.parent_id').val(cartery_node.id);{/*将父级分类放到隐藏域中*/}
-                </empty>
-        
-                //商品状态回显
-                var status = {$row.goods_status|default=0};
+                        <empty name = "row.id" >
+                        tree_obj.expandAll(true); //使用ztree展示树状结构，并展开所有的节点。
+                        <else / >
+                            //找到分类节点
+                            var cartery_node = tree_obj.getNodeByParam('id', {$row.goods_category_id});
+                            //选中这个节点
+                            tree_obj.selectNode(cartery_node);
+                            $('.cname').val(cartery_node.name);
+                            $('.parent_id').val(cartery_node.id);
+                        </empty>
+
+                        //商品状态回显
+                        var status = {$row.goods_status | default = 0};
                 var status_array = [];
-                if(status & 1){
+                if (status & 1) {
                     status_array.push(1);
                 }
-                if(status & 2){
+                if (status & 2) {
                     status_array.push(2);
                 }
-                if(status & 4){
+                if (status & 4) {
                     status_array.push(4);
                 }
                 $('.goods_status').val(status_array);
                 console.debug(status_array);
-                
-                
+
+
                 //回显商品是否上架
-                $('.is-on-sale').val([{$row.is_on_sale|default=1}]);
-                
+                $('.is-on-sale').val([{$row.is_on_sale | default = 1}]);
+                        //使用uploadify插件完成上传
+                        $("#logo").uploadify({
+                    height: 30,
+                    swf: '__EXT__/uploadify/uploadify.swf',
+                    uploader: '{:U("Upload/index")}', //'/uploadify/uploadify.php'
+                    width: 120,
+                    buttonText: 'LOGO',
+                    buttonClass: 'kunx',
+                    fileObjName: 'logo',
+                    multi: false, //是否允许批量上传
+                    formData: {name: 'kunx'},
+                    fileTypeExts: '*.jpg;*.png;*.gif',
+                    //如果要重写错误事件，我们需要使用overrideEvents像下面这样
+                    overrideEvents: ['onDialogClose', 'onUploadSuccess', 'onUploadError', 'onSelectError'],
+                    onSelectError: function(file, errorCode, errorMsg) {
+                        var msgText = "上传失败\n";
+                        switch (errorCode) {
+                            case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
+                                //this.queueData.errorMsg = "每次最多上传 " + this.settings.queueSizeLimit + "个文件";
+                                msgText += "每次最多上传 " + this.settings.queueSizeLimit + "个文件";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
+                                msgText += "文件大小超过限制( " + this.settings.fileSizeLimit + " )";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+                                msgText += "文件大小为0";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
+                                msgText += "文件格式不正确，仅限 " + this.settings.fileTypeExts;
+                                break;
+                            default:
+                                msgText += "错误代码：" + errorCode + "\n" + errorMsg;
+                        }
+                        layer.msg(msgText, function() {
+                        });
+//                        console.debug(arguments);
+                    },
+                    onUploadError: function(file, code, msg, errorString) {
+                        console.debug(arguments);
+                    },
+                    onUploadSuccess: function(file, data, response) {
+                        console.debug('success', arguments);
+//                        return;
+                        data = $.parseJSON(data);
+                        if (data.status) {
+                            var file_info = $.parseJSON(data.file);
+                            var img_src = file_info.url;
+                            //将隐藏的图片预览给显示出来
+                            $('.logo-img').attr('src', img_src + '-min').show();
+                            $('.logo-input').val(img_src);
+                            console.debug(img_src);
+                            layer.msg(data.msg, {icon: 1});
+                        } else {
+                            layer.msg(data.msg, {icon: 2});
+
+                        }
+                    },
+                });
             });
 
         </script>
