@@ -117,19 +117,6 @@
                                 <input type="text" name="market_price" value="{$row.market_price}" size="20" />
                             </td>
                         </tr>
-                        <!--                        <tr>
-                                                    <td class="label">商品关键词：</td>
-                                                    <td>
-                                                        <input type="text" name="keywords" value="" size="40" /> 用空格分隔
-                                                    </td>
-                                                </tr>-->
-
-                        <!--                        <tr>
-                                                    <td class="label">商品简单描述：</td>
-                                                    <td>
-                                                        <textarea name="goods_brief" cols="40" rows="3"></textarea>
-                                                    </td>
-                                                </tr>-->
                     </table>
 
 
@@ -183,16 +170,32 @@
                     <!--关联文章-->
                     <table width="90%" id="general-table" align="center" style="display: none;">
                         <tr>
-                            <td class="label">商品名称：</td>
-                            <td><input type="text" name="goods_name" value=""size="30" />
-                                <span class="require-field">*</span></td>
+                            <td colspan="3">
+                                <img src="__IMG__/icon_search.gif" width="26" height="22" border="0" alt="SEARCH">
+                                文章标题 <input type="text" class="keyword" name="article_title">
+                                <input type="button" value=" 搜索 " class='search_article' class="button">
+                              </td>
                         </tr>
                         <tr>
-                            <td class="label">商品货号： </td>
-                            <td>
-                                <input type="text" name="goods_sn" value="" size="20"/>
-                                <span id="goods_sn_notice"></span><br />
-                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                            <td style='width:40%;height: 200px'>
+                                <select multiple='multiple' style='width:100%;height: 200px' class="houxuan">
+                                    <option >1</option>
+                                    <option >2</option>
+                                    <option >3</option>
+                                </select>
+                            </td>
+                            <td align='center'>
+                                <input type="button" class="select_all" value=">>"/><br /><br />
+                                <input type="button" class="select_checked" value=">"/><br /><br />
+                                <input type="button" class="remove_checked" value="<"/><br /><br />
+                                <input type="button" class="remove_all" value="<<"/>
+                            </td>
+                            <td style='width:40%;height: 200px'>
+                                <select multiple='multiple' style='width:100%;height: 200px' class="xuanze">
+                                    <option >1</option>
+                                    <option >2</option>
+                                    <option >3</option>
+                                </select>
                             </td>
                         </tr>
                     </table>
@@ -305,7 +308,6 @@
                     status_array.push(4);
                 }
                 $('.goods_status').val(status_array);
-                console.debug(status_array);
 
 
                 //回显商品是否上架
@@ -348,10 +350,8 @@
 //                        console.debug(arguments);
                     },
                     onUploadError: function(file, code, msg, errorString) {
-                        console.debug(arguments);
                     },
                     onUploadSuccess: function(file, data, response) {
-                        console.debug('success', arguments);
 //                        return;
                         data = $.parseJSON(data);
                         if (data.status) {
@@ -360,7 +360,6 @@
                             //将隐藏的图片预览给显示出来
                             $('.logo-img').attr('src', img_src + '-min').show();
                             $('.logo-input').val(img_src);
-                            console.debug(img_src);
                             layer.msg(data.msg, {icon: 1});
                         } else {
                             layer.msg(data.msg, {icon: 2});
@@ -368,6 +367,87 @@
                         }
                     },
                 });
+                
+                
+                //搜索相关文章
+                $('.search_article').click(function(){
+                    var url = '{:U("Article/search")}';
+                    var keyword = $('.keyword').val();
+                    if(keyword){
+                        var data = {keyword:keyword};
+                        $.getJSON(url,data,function(response){
+                            var html = '';
+                            for(var i in response){
+                                html += '<option value="'+response[i].id+'">'+response[i].name+'</option>';
+                            }
+                            $('.houxuan').html(html);
+                        });
+                    }
+                });
+                
+                //候选区双击到选择区
+                $('.houxuan').on('dblclick','option',function(){
+//                    $(this).appendTo($('.xuanze'));
+                    move($(this),$('.xuanze'));
+                });
+                //双击移除选择区到候选区区
+                $('.xuanze').on('dblclick','option',function(){
+//                    $(this).appendTo($('.houxuan'));
+                    move($(this),$('.houxuan'));
+                });
+                
+                //全选
+                $('.select_all').click(function(){
+//                      $('.houxuan option').appendTo($('.xuanze'));
+                      move($('.houxuan option'),$('.xuanze'));
+                });
+                
+                //全部删除
+                $('.remove_all').click(function(){
+//                      $('.xuanze option').appendTo($('.houxuan'));
+                      move($('.xuanze option'),$('.houxuan'));
+                });
+                
+                //选择选中的
+//                $('.select_checked').click(function(){
+//                      $('.houxuan option:selected').appendTo($('.xuanze'));
+//                });
+                //选择选中的
+                $('.select_checked').click(function(){
+                    move($('.houxuan option:selected'),$('.xuanze'));
+//                      $('.houxuan option:selected').appendTo($('.xuanze'));
+                });
+                
+                //删除选中的
+                //选择选中的
+                $('.remove_checked').click(function(){
+//                      $('.xuanze option:selected').appendTo($('.houxuan'));
+                      move($('.xuanze option:selected'),$('.houxuan'));
+                });
+                
+                /**
+                 * options 要移动的option节点列表
+                 * target 要移动到的目标位置，是一个select节点
+                 */
+                function move(options,target){
+                    //遍历所有要移动的节点
+                    options.each(function(){
+                        var sopt = $(this);//当前option对象
+                        var exist = false;//是否已存在节点标识
+                        //要移动目标中所有的节点
+                        target.find('option').each(function(){
+                            var topt = $(this);//目标节点中的每一个option
+                            if(sopt.val() == topt.val()){
+                                exist = true;
+                                sopt.remove();
+                                return;
+                            }
+                        });
+                        if(!exist){
+                            sopt.appendTo(target);
+                        }
+                    });
+                }
             });
 
         </script>

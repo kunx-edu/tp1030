@@ -122,5 +122,15 @@ class ArticleController extends \Think\Controller {
             $this->error('修改失败');
         }
     }
+    
+    public function search($keyword=''){
+        $cond = array(
+            'name'=>array('like',$keyword . '%'),
+            'status'=>array('egt',0),
+        );
+        $model = M('Article');
+        echo json_encode($model->field('id,name')->where($cond)->select());
+//        return json_encode(M('Article')->where($cond)->);
+    }
 
 }
