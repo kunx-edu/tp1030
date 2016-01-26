@@ -49,7 +49,8 @@ class ArticleModel extends \Think\Model\RelationModel{
      * 详细信息放在了article_content表中
      */
     public function createArticle(){
-        if($id = $this->add()!==false){
+        unset($this->data['id']);
+        if(($id = $this->add())!==false){
             $data = array(
                 'article_id'=>$id,
                 'content'=>I('post.content','',false),
