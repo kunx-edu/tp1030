@@ -73,8 +73,12 @@ class GoodsController extends \Think\Controller {
         } else {
             //2.如果不是就展示
             $goods_category_model = D('GoodsCategory');
+            $brands = D('Brand')->getAll();
+            $suppliers = D('Supplier')->getAll();
             $categorys = $goods_category_model->getList();
             $this->assign('categorys', $categorys);
+            $this->assign('brands',$brands);
+            $this->assign('suppliers',$suppliers);
             $this->display('edit');
         }
     }

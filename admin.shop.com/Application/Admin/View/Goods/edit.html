@@ -65,12 +65,13 @@
                         <tr>
                             <td class="label">商品品牌：</td>
                             <td>
-                                <select name="brand_id">
-                                    <option value="0">请选择...</option>
-                                    <foreach name="brand_list" item="val">
-                                        <option value="<{$val.brand_id}>"><{$val.brand_name}></option>
-                                    </foreach>
-                                </select>
+                                {:arr2select($brands,'id','name','brand_id')}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">供应商：</td>
+                            <td>
+                                {:arr2select($suppliers,'id','name','supplier_id')}
                             </td>
                         </tr>
                         <tr>
@@ -94,11 +95,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="label">加入推荐：</td>
+                            <td class="label">商品状态：</td>
                             <td>
                                 <input type="checkbox" name="is_best" value="1" /> 精品 
-                                <input type="checkbox" name="is_new" value="1" /> 新品 
-                                <input type="checkbox" name="is_hot" value="1" /> 热销
+                                <input type="checkbox" name="is_new" value="2" /> 新品 
+                                <input type="checkbox" name="is_hot" value="4" /> 热销
                             </td>
                         </tr>
                         <tr>

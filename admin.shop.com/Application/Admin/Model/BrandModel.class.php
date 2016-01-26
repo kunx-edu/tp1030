@@ -32,4 +32,12 @@ class BrandModel extends \Think\Model{
         //2.执行数据的更新操作。
         return D('Brand')->where(array('id'=>array('in',$id)))->setField($data);
     }
+    
+    /**
+     * 获取所有的分类
+     * @return type
+     */
+    public function getAll(){
+        return $this->where(array('status'=>array('egt',0)))->select();
+    }
 }
