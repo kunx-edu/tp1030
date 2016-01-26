@@ -77,7 +77,8 @@ class GoodsModel extends \Think\Model\RelationModel {
         if ($id   = parent::add()) {
             //计算货号
             $sn = date('Ymd') . str_pad($id, 9, '0', STR_PAD_LEFT);
-            if ($this->where(array('id' => $id))->save(array('sn' => $sn)) === false) {
+            $this->where(array('id' => $id));
+            if (parent::save(array('sn' => $sn)) === false) {
                 $flag = false;
             }
 
@@ -95,6 +96,24 @@ class GoodsModel extends \Think\Model\RelationModel {
             $this->commit();
         } else {
             $this->rollback();
+        }
+    }
+    
+    /**
+     * 完成商品的更新。
+     * 由于需要修改多张表的数据，所以我们重写了save方法，完成了复杂逻辑。
+     * @return boolean
+     */
+    public function save(){
+        $request_data =$this->data;
+        if(parent::save() !== false){
+            $data = array(
+                'content'=>I('post.content','',false),
+                'goods_id'=>$request_data['id'],
+            );
+            return D('GoodsIntro')->save($data);
+        }else{
+            return FALSE;
         }
     }
 

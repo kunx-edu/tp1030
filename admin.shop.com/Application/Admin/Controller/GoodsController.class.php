@@ -89,10 +89,26 @@ class GoodsController extends \Think\Controller {
     public function edit($id) {
         $model = D('Goods');
         if (IS_POST) {
+            /*$data = $model->create();
+//            $data = I('post.');
+//            unset($data['content']);
+            $data['GoodsIntro']=array(
+                'content'=>I('post.content','',false),
+            );
+            if($model->relation(true)->save($data)!==FALSE){
+                $this->success('修改成功', cookie('forward'));
+            }else{
+                var_dump($model->getError());
+                echo '<hr />';
+                exit;
+                $this->error('修改失败');
+            }*/
             if ($model->create()) {
                 if ($model->save() !== false) {
                     $this->success('修改成功', cookie('forward'));
                 } else {
+                    var_dump($model->getError());
+                    exit;
                     $this->error('修改失败');
                 }
             } else {
@@ -117,12 +133,12 @@ class GoodsController extends \Think\Controller {
      * @param type $status
      */
     public function changeStatus($id, $status = -1) {
-        $model = D('Goods');
+        $model = M('Goods');
         $data = array('status'=> $status);
         if($status==-1){
             $data['name']=array('exp','concat(name,"_del")');
         }
-        $flag  = $model->where(array('id' => $id))->setField($data);
+        $flag = $model->where(array('id' => $id))->setField($data);
         if ($flag !== false) {
             $this->success('修改成功');
         } else {

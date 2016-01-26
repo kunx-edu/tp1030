@@ -82,7 +82,7 @@
                             <td align="center">
 <!--                                <a href="__APP__/Goods/?goods_id={$row.goods_id}" target="_blank" title="查看"><img src="./Images/icon_view.gif" width="16" height="16" border="0" /></a>-->
                                 <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a>
-                                <a href="{:U('delete',array('id'=>$row['id']))}" onclick="" title="回收站">删除</a></td>
+                                <a href="{:U('changeStatus',array('id'=>$row['id']))}" onclick="" title="回收站">删除</a></td>
                         </tr>
                     </foreach>
                 </table>
