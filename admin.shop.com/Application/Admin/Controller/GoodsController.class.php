@@ -100,8 +100,13 @@ class GoodsController extends \Think\Controller {
             }
         } else {
             //1.根据id获取数据表中的数据
-            $row = $model->find($id);
+            $row = $model->relation('GoodsIntro')->find($id);
+//            var_dump($row);
+//            exit;
             $this->assign('row', $row);
+            $this->assign('categorys', D('GoodsCategory')->getList());
+            $this->assign('brands',D('Brand')->getAll());
+            $this->assign('suppliers',D('Supplier')->getAll());
             $this->display();
         }
     }

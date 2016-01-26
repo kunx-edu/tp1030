@@ -24,12 +24,18 @@ function get_errors($errors) {
  * @param string $value_field value属性取自哪个字段
  * @param string $name_field option的文案取自哪个字段
  * @param string $name 下拉列表提交时使用的name属性
+ * @param string $select_value 默认选中项
+ * @return string $html 返回的select html代码
  */
-function arr2select(array $data,$value_field,$name_field,$name){
+function arr2select(array $data,$value_field,$name_field,$name,$select_value=''){
     $html = '<select name="' . $name .'">';
     $html .= '<option vaule="">请选择...</option>';
     foreach($data as $value){
-        $html .= "<option value='{$value[$value_field]}'>{$value[$name_field]}</option>";
+        if($value[$value_field] == $select_value){
+            $html .= "<option value='{$value[$value_field]}' selected='selected'>{$value[$name_field]}</option>";
+        }else{
+            $html .= "<option value='{$value[$value_field]}'>{$value[$name_field]}</option>";
+        }
     }
     $html .= '</select>';
     return $html;
