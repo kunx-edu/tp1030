@@ -18,6 +18,25 @@
                 overflow-y: scroll;
                 overflow-x: auto;
             }
+            
+            .upload-img-box{
+                width: 90px;
+                /*position: relative;*/
+            }
+            .upload-pre-item{
+                /*position: absolute;*/
+                /*float:left;*/
+                position:relative;
+            }
+
+            .upload-pre-item a{
+                    postion:absolute;
+                    top:0px;
+                    right:0px;
+                    background:white;
+                    color:red;
+                    display:block;
+            }
         </style>
     </head>
     <body>
@@ -70,11 +89,13 @@
                         <tr>
                             <td class="label">商品图片：</td>
                             <td>
-                                <input type="file" name="logo" id="logo" size="35" />
-                                <input type="hidden" name="logo" value="{$row.logo}" class="logo-input" />
-                                <div>
-                                    <img src="{$row.logo}-min" <empty name="row.logo">style="display: none;"</empty> class="logo-img"/>
-                                </div>
+                                <input type="file" id="logo" size="35" />
+                                <!--<div class="upload-img-box">-->
+                                    <div class="upload-pre-item">
+                                        <input type="hidden" name="logo" value="{$row.logo}" class="logo-input" />
+                                        <img src="{$row.logo}-min" <empty name="row.logo">style="display: none;"</empty> class="logo-img"/>
+                                    </div>
+                                <!--</div>-->
                             </td>
                         </tr>
                         <tr>
@@ -151,17 +172,19 @@
                     <!--商品相册-->
                     <table width="90%" id="general-table" align="center" style="display: none;">
                         <tr>
-                            <td class="label">商品名称：</td>
-                            <td><input type="text" name="goods_name" value=""size="30" />
-                                <span class="require-field">*</span></td>
+                            <td>
+                                <div class="gallery-img-box">
+                                    <foreach name="row.GoodsGallery" item="gallery">
+                                    <div class="upload-pre-item" style="display:inline-block">
+                                        <img src="{$gallery.path}-min" class="logo-img">
+                                        <a href="#" gid="{$gallery.gid}">×</a>
+                                    </div>
+                                    </foreach>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="label">商品货号： </td>
-                            <td>
-                                <input type="text" name="goods_sn" value="" size="20"/>
-                                <span id="goods_sn_notice"></span><br />
-                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
-                            </td>
+                            <td><input type="file" id="gallery-img" size="35" /></td>
                         </tr>
                     </table>
 
@@ -295,8 +318,8 @@
                             $('.parent_id').val(cartery_node.id);
                         </empty>
 
-                        //商品状态回显
-                        var status = {$row.goods_status | default = 0};
+                //商品状态回显
+                var status = {$row.goods_status|default=0};
                 var status_array = [];
                 if (status & 1) {
                     status_array.push(1);
@@ -311,18 +334,16 @@
 
 
                 //回显商品是否上架
-                $('.is-on-sale').val([{$row.is_on_sale | default = 1}]);
-                        //使用uploadify插件完成上传
-                        $("#logo").uploadify({
+                $('.is-on-sale').val([{$row.is_on_sale|default=1}]);
+                    //使用uploadify插件完成上传
+                    $("#logo").uploadify({
                     height: 30,
                     swf: '__EXT__/uploadify/uploadify.swf',
                     uploader: '{:U("Upload/index")}', //'/uploadify/uploadify.php'
                     width: 120,
                     buttonText: 'LOGO',
-                    buttonClass: 'kunx',
                     fileObjName: 'logo',
-                    multi: false, //是否允许批量上传
-                    formData: {name: 'kunx'},
+//                    multi: false, //是否允许批量上传
                     fileTypeExts: '*.jpg;*.png;*.gif',
                     //如果要重写错误事件，我们需要使用overrideEvents像下面这样
                     overrideEvents: ['onDialogClose', 'onUploadSuccess', 'onUploadError', 'onSelectError'],
@@ -364,6 +385,65 @@
                         } else {
                             layer.msg(data.msg, {icon: 2});
 
+                        }
+                    },
+                });
+                
+                //相册：使用uploadify插件完成上传
+                $("#gallery-img").uploadify({
+                    height: 30,
+                    swf: '__EXT__/uploadify/uploadify.swf',
+                    uploader: '{:U("Upload/index")}', //'/uploadify/uploadify.php'
+                    width: 120,
+                    buttonText: 'LOGO',
+                    fileObjName: 'logo',
+//                    multi: false, //是否允许批量上传
+                    fileTypeExts: '*.jpg;*.png;*.gif',
+                    //如果要重写错误事件，我们需要使用overrideEvents像下面这样
+                    overrideEvents: ['onDialogClose', 'onUploadSuccess', 'onUploadError', 'onSelectError'],
+                    onSelectError: function(file, errorCode, errorMsg) {
+                        var msgText = "上传失败\n";
+                        switch (errorCode) {
+                            case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
+                                //this.queueData.errorMsg = "每次最多上传 " + this.settings.queueSizeLimit + "个文件";
+                                msgText += "每次最多上传 " + this.settings.queueSizeLimit + "个文件";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
+                                msgText += "文件大小超过限制( " + this.settings.fileSizeLimit + " )";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+                                msgText += "文件大小为0";
+                                break;
+                            case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
+                                msgText += "文件格式不正确，仅限 " + this.settings.fileTypeExts;
+                                break;
+                            default:
+                                msgText += "错误代码：" + errorCode + "\n" + errorMsg;
+                        }
+                        layer.msg(msgText, function() {
+                        });
+//                        console.debug(arguments);
+                    },
+                    onUploadError: function(file, code, msg, errorString) {
+                    },
+                    onUploadSuccess: function(file, data, response) {
+//                        return;
+                        data = $.parseJSON(data);
+                        if (data.status) {
+                            var file_info = $.parseJSON(data.file);
+                            var img_src = file_info.url;
+                            //将图片添加到相册的图片列表中
+                            
+                            var html = '<div class="upload-pre-item" style="display:inline-block"> \
+                                        <input type="hidden" name="path[]" value="'+ img_src +'" class="logo-input"> \
+                                        <img src="'+ img_src +'-min" class="logo-img"> \
+                                        <a href="#">×</a> \
+                                    </div>';
+                            $(html).appendTo('.gallery-img-box');
+                            layer.msg(data.msg, {icon: 1});
+                            
+                        } else {
+                            layer.msg(data.msg, {icon: 2});
                         }
                     },
                 });
@@ -448,6 +528,33 @@
                         }
                     });
                 }
+                
+                
+                //删除相册图片:删除节点  如果文件已经在数据表中存在，就移除
+                $('.gallery-img-box').on('click','a',function(){
+                    var ele = $(this);
+                    //是否存在id属性，如果存在说明是已经入库的
+                    if(ele.attr('gid')){
+                        //ajax操作
+                        var url = '{:U("GoodsGallery/remove")}';
+                        var data = {gid:ele.attr('gid')};
+                        //需要删除数据库中的记录，并且移除节点
+                        $.getJSON(url,data,function(response){
+                            console.debug(response);
+                            if(response.status){
+                                ele.parent().remove();
+                                layer.msg(response.msg,{icon:1});
+                            } else{
+                                layer.msg(response.msg,function(){ });
+                            }
+                        });
+                    }else{ //没有入库的只需要移除节点即可
+                        ele.parent().remove();
+                        layer.msg('删除成功',{icon:1});
+                    }
+                });
+                
+                
             });
 
         </script>

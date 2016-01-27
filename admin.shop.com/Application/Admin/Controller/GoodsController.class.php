@@ -116,7 +116,8 @@ class GoodsController extends \Think\Controller {
             }
         } else {
             //1.根据id获取数据表中的数据
-            $row = $model->relation('GoodsIntro')->find($id);
+//            $row = $model->relation(array('GoodsIntro','GoodsGallery'))->find($id);
+            $row = $model->relation(true)->find($id);
 //            var_dump($row);
 //            exit;
             $this->assign('row', $row);

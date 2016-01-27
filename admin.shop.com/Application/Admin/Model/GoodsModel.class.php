@@ -37,14 +37,17 @@ class GoodsModel extends \Think\Model\RelationModel {
     /**
      * 关联模型
      */
-    protected $_link=array(
-        'GoodsIntro'=>array(
-            'mapping_type'=>self::HAS_ONE,
-            'foreign_key'=>'goods_id',
+    protected $_link = array(
+        'GoodsIntro' => array(
+            'mapping_type' => self::HAS_ONE,
+            'foreign_key'  => 'goods_id',
 //            'class_name'=>'GoodsIntro',
         ),
+        'GoodsGallery'=>array(
+            'mapping_type'=>self::HAS_MANY,
+            'foreign_key'=>'goods_id',
+        ),
     );
-
 
     /**
      * @param int|array $id
@@ -85,11 +88,25 @@ class GoodsModel extends \Think\Model\RelationModel {
             //将详细信息保存到goods_intro表中
             $intro = array(
                 'goods_id' => $id,
-                'content'  => I('post.content','',false),
+                'content'  => I('post.content', '', false),
             );
-            
+
             if (D('GoodsIntro')->add($intro) === false) {
                 $flag = false;
+            }
+
+            //将商品的相册图片保存到数据表中
+            $gallery = array();
+            foreach (I('post.path','',false) as $path) {
+                $gallery[] = array(
+                    'goods_id' => $id,
+                    'path'     => $path['path'],
+                );
+            }
+            if (!empty($gallery)) {
+                if (M('GoodsGallery')->addAll($gallery) === false) {
+                    $flag = false;
+                }
             }
         }
         if ($flag) {
@@ -98,23 +115,44 @@ class GoodsModel extends \Think\Model\RelationModel {
             $this->rollback();
         }
     }
-    
+
     /**
      * 完成商品的更新。
      * 由于需要修改多张表的数据，所以我们重写了save方法，完成了复杂逻辑。
      * @return boolean
      */
-    public function save(){
-        $request_data =$this->data;
-        if(parent::save() !== false){
+    public function save() {
+        $request_data = $this->data;
+        $flag = true;
+        if (parent::save() !== false) {
+            //商品详细描述的信息
             $data = array(
-                'content'=>I('post.content','',false),
-                'goods_id'=>$request_data['id'],
+                'content'  => I('post.content', '', false),
+                'goods_id' => $request_data['id'],
             );
-            return D('GoodsIntro')->save($data);
+            if(D('GoodsIntro')->save($data) === false){
+                $flag = false;
+            }
+            
+            //将商品的相册图片保存到数据表中
+            $gallery = array();
+            foreach (I('post.path','',false) as $path) {
+                $gallery[] = array(
+                    'goods_id' => $request_data['id'],
+                    'path'     => $path,
+                );
+            }
+//            var_dump($gallery);
+//            exit;
+            if (!empty($gallery)) {
+                if (M('GoodsGallery')->addAll($gallery) === false) {
+                    $flag = false;
+                }
+            }
         }else{
-            return FALSE;
+            $flag=false;
         }
+        return $flag;
     }
 
 }
