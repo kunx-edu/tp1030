@@ -40,15 +40,10 @@ class ArticleCategoryController extends \Think\Controller {
         $count = $model->where($where)->count();
         //5.2获取分页html代码
         $size = C('PAGE_SIZE')?C('PAGE_SIZE'):10;
-        $page = new \Think\Page($count, $size);
-        $page->setConfig('theme', C('PAGE_THEME'));
-        $page_html = $page->show();
         
         $rows = $model->where($where)->page(I('get.p',1),$size)->select();
         //3.展示数据
         $this->assign('rows', $rows);
-        $this->assign('keyword', $keyword);
-        $this->assign('page_html', $page_html);
         $this->display();
     }
 

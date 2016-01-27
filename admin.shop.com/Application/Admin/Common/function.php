@@ -29,7 +29,7 @@ function get_errors($errors) {
  */
 function arr2select(array $data, $value_field, $name_field, $name, $select_value = '') {
     $html = '<select name="' . $name . '">';
-    $html .= '<option vaule="">请选择...</option>';
+    $html .= '<option vaule="-1">请选择...</option>';
     foreach ($data as $value) {
         if ($value[$value_field] == $select_value) {
             $html .= "<option value='{$value[$value_field]}' selected='selected'>{$value[$name_field]}</option>";
@@ -43,7 +43,14 @@ function arr2select(array $data, $value_field, $name_field, $name, $select_value
 
 /**
  * 将数组转换为关联数组。
+ * array(
+ *  0=>array('id'=>3,'name'=>'zhangsan')
+ * )
  * 
+ * array(
+ *  3=>
+ *      array('id'=>3,'name'=>'zhangsan')
+ * )
  * @param array  $data  多行数据。
  * @param string $field 根据那个字段生成关联数组
  * @return array

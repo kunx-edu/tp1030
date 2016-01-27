@@ -24,9 +24,6 @@ class ArticleModel extends \Think\Model\RelationModel{
             'mapping_type'=>self::HAS_ONE,
             'foreign_key'=>'article_id',
         ),
-//        'GoodsArticle'=>array(
-//            
-//        ),
         
     );
     /**
@@ -84,6 +81,11 @@ class ArticleModel extends \Think\Model\RelationModel{
         return false;
     }
     
+    /**
+     * 获取商品关联的所有的文章的id和name
+     * @param integer $goods_id
+     * @return array
+     */
     public function getArticles($goods_id){
         //SELECT a.id,a.name FROM article AS a LEFT JOIN goods_article AS ga ON a.`id`=ga.`article_id` WHERE goods_id=5
         return $model = $this->field('a.id,a.name')->alias('a')->join('left join goods_article as ga ON a.`id`=ga.`article_id`')->where(array('goods_id'=>$goods_id))->select();

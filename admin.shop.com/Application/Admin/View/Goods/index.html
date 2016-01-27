@@ -18,34 +18,26 @@
             <form action="" name="searchForm">
                 <img src="__IMG__/icon_search.gif" width="26" height="22" border="0" alt="search" />
                 <!-- 分类 -->
-                <select name="cat_id">
-                    <option value="0">所有分类</option>
-                    <foreach name="cat_list" item="val">
-                        <option value="{$row.cat_id}">{$row.lev|str_repeat='&nbsp;&nbsp;',###}{$row.cat_name}</option>
-                    </foreach>
-                </select>
+                分类{:arr2select($categorys,'id','name','search_category',$search['category'])}
                 <!-- 品牌 -->
-                <select name="brand_id">
-                    <option value="0">所有品牌</option>
-                    <foreach name="brand_list" item="val">
-                        <option value="{$row.brand_id}">{$row.brand_name}</option>
-                    </foreach>
-                </select>
+                品牌{:arr2select($brands,'id','name','search_brand',$search['brand'])}
+                
                 <!-- 推荐 -->
-                <select name="intro_type">
+                推荐<select name="search_status">
                     <option value="0">全部</option>
-                    <option value="is_best">精品</option>
-                    <option value="is_new">新品</option>
-                    <option value="is_hot">热销</option>
+                    <foreach name='statuses' item='status'>
+                        <option value="{$key}" <if condition="$key eq $search['status']">selected="selected"</if>>{$status}</option>
+                    </foreach>
                 </select>
                 <!-- 上架 -->
-                <select name="is_on_sale">
-                    <option value=''>全部</option>
-                    <option value="1">上架</option>
-                    <option value="0">下架</option>
+                上架<select name="search_is_on_sale">
+                    <option value='-1'>全部</option>
+                    <foreach name='is_on_sale' item='status'>
+                        <option value="{$key}" <if condition="$key eq $search['is_on_sale']">selected="selected"</if>>{$status}</option>
+                    </foreach>
                 </select>
                 <!-- 关键字 -->
-                关键字 <input type="text" name="keyword" size="15" />
+                关键字 <input type="text" name="search_keyword" size="15" value='{$search.keyword}'/>
                 <input type="submit" value=" 搜索 " class="button" />
             </form>
         </div>
@@ -106,6 +98,16 @@
 
         <div id="footer">
             共执行 7 个查询，用时 0.028849 秒，Gzip 已禁用，内存占用 3.219 MB<br />
-            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+        </div>
+        <js href='__JS__/jquery.min.js'/>
+        <script type='text/javascript'>
+            $(function(){
+//                $('select').eq(0).val(['{$search.category}']);
+//                $('select').eq(1).val(['{$search.brand}']);
+//                $('select').eq(2).val(['{$search.status}']);
+//                $('select').eq(3).val(['{$search.is_on_sale}']);
+            });
+        </script>
     </body>
 </html>

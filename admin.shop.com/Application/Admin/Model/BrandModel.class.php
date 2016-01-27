@@ -37,7 +37,7 @@ class BrandModel extends \Think\Model{
      * 获取所有的分类
      * @return type
      */
-    public function getAll(){
-        return $this->where(array('status'=>array('egt',0)))->select();
+    public function getAll($field = '*'){
+        return $this->field($field)->where(array('status'=>array('egt',0)))->select();
     }
 }

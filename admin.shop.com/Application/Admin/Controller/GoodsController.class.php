@@ -26,37 +26,72 @@ class GoodsController extends \Think\Controller {
      * 商品列表.
      * 具备分页功能.
      */
-    public function index($keyword = '') {
+    public function index() {
         //记录当前页面地址，为编辑跳转做准备
         cookie('forward', __SELF__);
-
+        /**
+         * 获取并拼接查询条件
+         */
+        $conditions['status'] = array('egt', 0);
+        //是否带有分类要求
+        $search_category = I('get.search_category');
+        if ($search_category && $search_category > 0) {
+            //先查询所有的后代分类id列表
+            $children_category = D('GoodsCategory')->getChildren($search_category); 
+            $tmp_category = array_merge(array($search_category),$children_category);
+            $conditions['goods_category_id'] = array('in',$tmp_category);
+            unset($tmp_category);
+        }
+        
+        //是否带有品牌条件
+        $search_brand = I('get.search_brand');
+        if ($search_brand && $search_brand > 0) {
+            $conditions['brand_id'] = $search_brand;
+        }
+        
+        //是否带有状态条件
+        $search_status = I('get.search_status');
+        if ($search_status > 0) {
+            $conditions['_string'] = 'goods_status & '. $search_status;
+        }
+        
+        //是否带有状态条件
+        $search_is_on_sale = I('get.search_is_on_sale',-1);
+        if ($search_is_on_sale == '-1') {
+            
+        } else{
+            $conditions['is_on_sale'] = $search_is_on_sale;
+        }
+        
+        $search_keyword = I('get.search_keyword');
+        if ($search_keyword) {
+            $conditions['name'] = array('like', $search_keyword . '%');
+        }
         //1.创建模型
         $model           = D('Goods');
-        //2.获取数据
-        $where['status'] = array('egt', 0);
-        if ($keyword) {
-            $where['name'] = array('like', $keyword . '%');
-        }
+        
         //5.获取满足条件的总行数
         $size      = C('PAGE_SIZE') ? C('PAGE_SIZE') : 10;
-        list($count,$rows) = $model->getList($where,$size);
-//        $count     = $model->where($where)->count();
+        list($count, $rows) = $model->getList($conditions, $size);
         //5.2获取分页html代码
         $page      = new \Think\Page($count, $size);
         $page->setConfig('theme', C('PAGE_THEME'));
         $page_html = $page->show();
-
-//        $rows = $model->where($where)->page(I('get.p', 1), $size)->select();
-//        foreach ($rows as $key => $value) {
-//            $rows[$key]['is_best'] = $value['goods_status'] & 1 ? 1 : 0;
-//            $rows[$key]['is_new']  = $value['goods_status'] & 2 ? 1 : 0;
-//            $rows[$key]['is_hot']  = $value['goods_status'] & 4 ? 1 : 0;
-//        }
-//        var_dump($rows);
         //3.展示数据
         $this->assign('rows', $rows);
-        $this->assign('keyword', $keyword);
         $this->assign('page_html', $page_html);
+        $this->assign('categorys', D('GoodsCategory')->getList('id,name', false));
+        $this->assign('brands', D('Brand')->getAll('id,name'));
+        $this->assign('statuses', \Admin\Model\GoodsModel::$statuses);
+        $this->assign('is_on_sale', \Admin\Model\GoodsModel::$isOnSale);
+        $search = array(
+            'category'=>$search_category,
+            'brand'=>$search_brand,
+            'status'=>$search_status,
+            'is_on_sale'=>$search_is_on_sale,
+            'keyword'=>$search_keyword,
+            );
+        $this->assign('search', $search);
         $this->display();
     }
 
@@ -80,10 +115,9 @@ class GoodsController extends \Think\Controller {
             }
         } else {
             //2.如果不是就展示
-            $goods_category_model = D('GoodsCategory');
-            $brands               = D('Brand')->getAll();
-            $suppliers            = D('Supplier')->getAll();
-            $categorys            = $goods_category_model->getList();
+            $brands    = D('Brand')->getAll();
+            $suppliers = D('Supplier')->getAll();
+            $categorys = D('GoodsCategory')->getList();
             $this->assign('categorys', $categorys);
             $this->assign('brands', $brands);
             $this->assign('suppliers', $suppliers);
@@ -97,20 +131,6 @@ class GoodsController extends \Think\Controller {
     public function edit($id) {
         $model = D('Goods');
         if (IS_POST) {
-            /* $data = $model->create();
-              //            $data = I('post.');
-              //            unset($data['content']);
-              $data['GoodsIntro']=array(
-              'content'=>I('post.content','',false),
-              );
-              if($model->relation(true)->save($data)!==FALSE){
-              $this->success('修改成功', cookie('forward'));
-              }else{
-              var_dump($model->getError());
-              echo '<hr />';
-              exit;
-              $this->error('修改失败');
-              } */
             if ($model->create()) {
                 if ($model->save() !== false) {
                     $this->success('修改成功', cookie('forward'));
@@ -123,10 +143,6 @@ class GoodsController extends \Think\Controller {
         } else {
             //1.根据id获取数据表中的数据
             $row = $model->relation(array('GoodsIntro', 'GoodsGallery'))->find($id);
-//            $row = $model->field('*,a.id as aid,a.name as aname')->alias('g')->join('LEFT JOIN goods_article AS ga ON g.`id`=ga.`goods_id` LEFT JOIN article AS a ON ga.`article_id`=a.`id`')->relation(true)->where(array('g.id'=>$id))->find();
-//            $articles = D('Article')->getArticles($id);
-//            var_dump($row);
-//            exit;
             $this->assign('row', $row);
             $this->assign('categorys', D('GoodsCategory')->getList());
             $this->assign('brands', D('Brand')->getAll());

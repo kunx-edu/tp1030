@@ -66,14 +66,14 @@ class GoodsCategoryModel extends \Think\Model {
          * 此处不要使用find查询原来的数据，原因是，find会对当前对象的data属性进行修改，修改为数据库中的内容
          * 从而导致$this->create()收集到的数据被污染
          */
-        $parent_id=$this->getFieldById($this->data['id'],'parent_id');
-        if($parent_id != $this->data['parent_id']){
+        $parent_id = $this->getFieldById($this->data['id'], 'parent_id');
+        if ($parent_id != $this->data['parent_id']) {
             //>>1.执行sql的对象
-           $db_mysql_model  = new \Admin\Model\DbMysqlModel();
-           //>>2.完成业务运算的对象
-           $nested_sets = new \Admin\Service\NestedSets($db_mysql_model,'goods_category','lft','rght','parent_id','id','level');
-            $result = $nested_sets->moveUnder($this->data['id'], $this->data['parent_id'],'bottom');
-            if($result===false){
+            $db_mysql_model = new \Admin\Model\DbMysqlModel();
+            //>>2.完成业务运算的对象
+            $nested_sets    = new \Admin\Service\NestedSets($db_mysql_model, 'goods_category', 'lft', 'rght', 'parent_id', 'id', 'level');
+            $result         = $nested_sets->moveUnder($this->data['id'], $this->data['parent_id'], 'bottom');
+            if ($result === false) {
                 $this->error = '移动失败!不能够移动到自己的子节点下!';
                 return false;
             }
@@ -91,7 +91,7 @@ class GoodsCategoryModel extends \Think\Model {
         $nested_sets    = new \Admin\Service\NestedSets($db_mysql_model, 'goods_category', 'lft', 'rght', 'parent_id', 'id', 'level');
         $nested_sets->delete($id);
     }
-    
+
     /**
      * 逻辑删除分类
      * 在name后面拼接_del并且将状态改为-1
@@ -99,29 +99,58 @@ class GoodsCategoryModel extends \Think\Model {
      * @param int $id
      * @return int|false
      */
-    public function delete2($id){
+    public function delete2($id) {
         //1.获取原始数据
-        $this->field('lft,rght')->where(array('id'=>$id))->find();
+        $this->field('lft,rght')->where(array('id' => $id))->find();
         //准备修改的数据
         $data = array(
-            'status'=>-1,
-            'name'=>array('exp','concat(name,"_del")'),
+            'status' => -1,
+            'name'   => array('exp', 'concat(name,"_del")'),
         );
         //update goods_category set status=-1,name=concat(name,'_del') where lft>=2 and rght<=9
         //准备用于修改的条件
         $cond = array(
-            'lft'=>array('egt',$this->data['lft']),
-            'rght'=>array('elt',$this->data['rght']),
+            'lft'  => array('egt', $this->data['lft']),
+            'rght' => array('elt', $this->data['rght']),
         );
         $this->where($cond);
         return parent::save($data);
     }
-    
+
     /**
      * 获取所有的没有被删除的分类
-     * 返回json字符串，便于js使用
+     * 第一个参数用于设定取得哪些字段
+     * 如果第二个参数没有写或者是true返回json字符串，便于js使用
      */
-    public function getList(){
-        return json_encode($this->where(array('status'=>array('egt',0)))->order('lft')->select());
+    public function getList($field = '*', $is_ajax = true) {
+        $rows = $this->field($field)->where(array('status' => array('egt', 0)))->order('lft')->select();
+        if ($is_ajax) {
+            return json_encode($rows);
+        } else {
+            return $rows;
+        }
     }
+
+    /**
+     * 获取指定分类的所有后代分类。
+     * @param int $id 指定的分类
+     * @return type
+     */
+    public function getChildren($id) {
+        $row   = $this->field('lft,rght')->find($id);
+        $where = array(
+            'lft' => array('gt', $row['lft']),
+            'rght' => array('lt', $row['rght']),
+            );
+        $rows = $this->field('id')->where($where)->select();
+//        var_dump($rows);
+        
+        $data = array();
+        foreach($rows as $row){
+            $data[] = $row['id'];
+        }
+//        var_dump($data);
+        return $data;
+    }
+
 }

@@ -7,12 +7,30 @@ namespace Admin\Model;
  * @author kunx
  */
 class GoodsModel extends \Think\Model\RelationModel {
+    /**
+     * 商品状态配置数组
+     * @var type 
+     */
+    public static $statuses = array(
+        1=>'精品',
+        2=>'新品',
+        4=>'热销',
+    );
+    
+    /**
+     * 商品上下架配置。
+     * @var type 
+     */
+    public static $isOnSale = array(
+        1=>'在售',
+        0=>'下架',
+    );
 
     protected $patchValidate = true; //开启批量验证
     protected $_validate     = array(
         array('name', 'require', '名称不能为空'),
 //	array('sn','require','货号不能为空'),
-        array('logo', 'require', '商品LOGO不能为空'),
+//        array('logo', 'require', '商品LOGO不能为空'),
         array('goods_category_id', 'require', '商品分类不能为空'),
         array('brand_id', 'require', '品牌不能为空'),
         array('supplier_id', 'require', '供货商不能为空'),
@@ -205,13 +223,4 @@ class GoodsModel extends \Think\Model\RelationModel {
         return array($count,$rows);
     }
 }
-/**
- * array(
- *  0=>array('id'=>3,'name'=>'zhangsan')
- * )
- * 
- * array(
- *  3=>
- *      array('id'=>3,'name'=>'zhangsan')
- * )
- */
+
