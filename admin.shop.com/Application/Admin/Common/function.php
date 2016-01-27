@@ -27,16 +27,31 @@ function get_errors($errors) {
  * @param string $select_value 默认选中项
  * @return string $html 返回的select html代码
  */
-function arr2select(array $data,$value_field,$name_field,$name,$select_value=''){
-    $html = '<select name="' . $name .'">';
+function arr2select(array $data, $value_field, $name_field, $name, $select_value = '') {
+    $html = '<select name="' . $name . '">';
     $html .= '<option vaule="">请选择...</option>';
-    foreach($data as $value){
-        if($value[$value_field] == $select_value){
+    foreach ($data as $value) {
+        if ($value[$value_field] == $select_value) {
             $html .= "<option value='{$value[$value_field]}' selected='selected'>{$value[$name_field]}</option>";
-        }else{
+        } else {
             $html .= "<option value='{$value[$value_field]}'>{$value[$name_field]}</option>";
         }
     }
     $html .= '</select>';
     return $html;
+}
+
+/**
+ * 将数组转换为关联数组。
+ * 
+ * @param array  $data  多行数据。
+ * @param string $field 根据那个字段生成关联数组
+ * @return array
+ */
+function get_data_by_column(array $data, $field) {
+    $return = array();
+    foreach ($data as $value) {
+        $return[$value[$field]] = $value;
+    }
+    return $return;
 }

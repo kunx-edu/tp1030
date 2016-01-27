@@ -100,11 +100,26 @@ class GoodsModel extends \Think\Model\RelationModel {
             foreach (I('post.path','',false) as $path) {
                 $gallery[] = array(
                     'goods_id' => $id,
-                    'path'     => $path['path'],
+                    'path'     => $path,
                 );
             }
             if (!empty($gallery)) {
                 if (M('GoodsGallery')->addAll($gallery) === false) {
+                    $flag = false;
+                }
+            }
+            
+            //将关联文章保存到数据表中
+            $articles = array();
+            foreach (I('post.article_ids','',false) as $path) {
+                $articles[] = array(
+                    'goods_id' => $id,
+                    'article_id'     => $path,
+                );
+            }
+            if (!empty($articles)) {
+                $article_model = M('GoodsArticle');
+                if ($article_model->addAll($articles) === false) {
                     $flag = false;
                 }
             }
@@ -149,10 +164,54 @@ class GoodsModel extends \Think\Model\RelationModel {
                     $flag = false;
                 }
             }
+            
+            //将关联文章保存到数据表中
+            $articles = array();
+            foreach (I('post.article_ids','',false) as $path) {
+                $articles[] = array(
+                    'goods_id' => $request_data['id'],
+                    'article_id'     => $path,
+                );
+            }
+            $article_model = M('GoodsArticle');
+            $article_model->where(array('goods_id'=>$request_data['id']))->delete();
+            if (!empty($articles)) {
+                if ($article_model->addAll($articles) === false) {
+                    $flag = false;
+                }
+            }
         }else{
             $flag=false;
         }
         return $flag;
     }
 
+    
+    public function getList($where,$size){
+        //获取所有的品牌
+        $brands = D('Brand')->field('id,name')->where(array('status'=>array('egt',0)))->select();
+        $suppliers = D('Supplier')->field('id,name')->where(array('status'=>array('egt',0)))->select();
+        $brands = get_data_by_column($brands, 'id');
+        $suppliers = get_data_by_column($suppliers, 'id');
+        $count     = $this->where($where)->count();
+        $rows = $this->where($where)->page(I('get.p', 1), $size)->select();
+        foreach ($rows as $key => $value) {
+            $rows[$key]['is_best'] = $value['goods_status'] & 1 ? 1 : 0;
+            $rows[$key]['is_new']  = $value['goods_status'] & 2 ? 1 : 0;
+            $rows[$key]['is_hot']  = $value['goods_status'] & 4 ? 1 : 0;
+            $rows[$key]['brand_name'] = $brands[$value['brand_id']]['name'];
+            $rows[$key]['supplier_name'] = $suppliers[$value['supplier_id']]['name'];
+        }
+        return array($count,$rows);
+    }
 }
+/**
+ * array(
+ *  0=>array('id'=>3,'name'=>'zhangsan')
+ * )
+ * 
+ * array(
+ *  3=>
+ *      array('id'=>3,'name'=>'zhangsan')
+ * )
+ */

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace Admin\Controller;
 
 /**
@@ -27,8 +28,8 @@ class GoodsController extends \Think\Controller {
      */
     public function index($keyword = '') {
         //记录当前页面地址，为编辑跳转做准备
-        cookie('forward',__SELF__);
-        
+        cookie('forward', __SELF__);
+
         //1.创建模型
         $model           = D('Goods');
         //2.获取数据
@@ -37,14 +38,21 @@ class GoodsController extends \Think\Controller {
             $where['name'] = array('like', $keyword . '%');
         }
         //5.获取满足条件的总行数
-        $count = $model->where($where)->count();
+        $size      = C('PAGE_SIZE') ? C('PAGE_SIZE') : 10;
+        list($count,$rows) = $model->getList($where,$size);
+//        $count     = $model->where($where)->count();
         //5.2获取分页html代码
-        $size = C('PAGE_SIZE')?C('PAGE_SIZE'):10;
-        $page = new \Think\Page($count, $size);
+        $page      = new \Think\Page($count, $size);
         $page->setConfig('theme', C('PAGE_THEME'));
         $page_html = $page->show();
-        
-        $rows = $model->where($where)->page(I('get.p',1),$size)->select();
+
+//        $rows = $model->where($where)->page(I('get.p', 1), $size)->select();
+//        foreach ($rows as $key => $value) {
+//            $rows[$key]['is_best'] = $value['goods_status'] & 1 ? 1 : 0;
+//            $rows[$key]['is_new']  = $value['goods_status'] & 2 ? 1 : 0;
+//            $rows[$key]['is_hot']  = $value['goods_status'] & 4 ? 1 : 0;
+//        }
+//        var_dump($rows);
         //3.展示数据
         $this->assign('rows', $rows);
         $this->assign('keyword', $keyword);
@@ -73,12 +81,12 @@ class GoodsController extends \Think\Controller {
         } else {
             //2.如果不是就展示
             $goods_category_model = D('GoodsCategory');
-            $brands = D('Brand')->getAll();
-            $suppliers = D('Supplier')->getAll();
-            $categorys = $goods_category_model->getList();
+            $brands               = D('Brand')->getAll();
+            $suppliers            = D('Supplier')->getAll();
+            $categorys            = $goods_category_model->getList();
             $this->assign('categorys', $categorys);
-            $this->assign('brands',$brands);
-            $this->assign('suppliers',$suppliers);
+            $this->assign('brands', $brands);
+            $this->assign('suppliers', $suppliers);
             $this->display('edit');
         }
     }
@@ -89,26 +97,24 @@ class GoodsController extends \Think\Controller {
     public function edit($id) {
         $model = D('Goods');
         if (IS_POST) {
-            /*$data = $model->create();
-//            $data = I('post.');
-//            unset($data['content']);
-            $data['GoodsIntro']=array(
-                'content'=>I('post.content','',false),
-            );
-            if($model->relation(true)->save($data)!==FALSE){
-                $this->success('修改成功', cookie('forward'));
-            }else{
-                var_dump($model->getError());
-                echo '<hr />';
-                exit;
-                $this->error('修改失败');
-            }*/
+            /* $data = $model->create();
+              //            $data = I('post.');
+              //            unset($data['content']);
+              $data['GoodsIntro']=array(
+              'content'=>I('post.content','',false),
+              );
+              if($model->relation(true)->save($data)!==FALSE){
+              $this->success('修改成功', cookie('forward'));
+              }else{
+              var_dump($model->getError());
+              echo '<hr />';
+              exit;
+              $this->error('修改失败');
+              } */
             if ($model->create()) {
                 if ($model->save() !== false) {
                     $this->success('修改成功', cookie('forward'));
                 } else {
-                    var_dump($model->getError());
-                    exit;
                     $this->error('修改失败');
                 }
             } else {
@@ -116,14 +122,16 @@ class GoodsController extends \Think\Controller {
             }
         } else {
             //1.根据id获取数据表中的数据
-//            $row = $model->relation(array('GoodsIntro','GoodsGallery'))->find($id);
-            $row = $model->relation(true)->find($id);
+            $row = $model->relation(array('GoodsIntro', 'GoodsGallery'))->find($id);
+//            $row = $model->field('*,a.id as aid,a.name as aname')->alias('g')->join('LEFT JOIN goods_article AS ga ON g.`id`=ga.`goods_id` LEFT JOIN article AS a ON ga.`article_id`=a.`id`')->relation(true)->where(array('g.id'=>$id))->find();
+//            $articles = D('Article')->getArticles($id);
 //            var_dump($row);
 //            exit;
             $this->assign('row', $row);
             $this->assign('categorys', D('GoodsCategory')->getList());
-            $this->assign('brands',D('Brand')->getAll());
-            $this->assign('suppliers',D('Supplier')->getAll());
+            $this->assign('brands', D('Brand')->getAll());
+            $this->assign('suppliers', D('Supplier')->getAll());
+            $this->assign('articles', D('Article')->getArticles($id));
             $this->display();
         }
     }
@@ -135,9 +143,9 @@ class GoodsController extends \Think\Controller {
      */
     public function changeStatus($id, $status = -1) {
         $model = M('Goods');
-        $data = array('status'=> $status);
-        if($status==-1){
-            $data['name']=array('exp','concat(name,"_del")');
+        $data  = array('status' => $status);
+        if ($status == -1) {
+            $data['name'] = array('exp', 'concat(name,"_del")');
         }
         $flag = $model->where(array('id' => $id))->setField($data);
         if ($flag !== false) {
