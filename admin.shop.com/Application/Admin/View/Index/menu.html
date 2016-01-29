@@ -149,6 +149,15 @@ body {
                 </ul>
             </li>
 
+            <li class="explode" key="08_members" name="menu">
+            文章管理
+                <ul>
+                    <li class="menu-item"><a href="{:U('Article/index')}" target="main-frame">文章列表</a></li>
+                    <li class="menu-item"><a href="{:U('Article/add')}" target="main-frame">添加文章</a></li>
+                    <li class="menu-item"><a href="{:U('ArticleCategory/index')}" target="main-frame">文章分类</a></li>
+                    <li class="menu-item"><a href="{:U('ArticleCategory/add')}" target="main-frame">新建分类</a></li>
+                </ul>
+            </li>
             <li class="explode" key="04_order" name="menu">
             订单管理
                 <ul>
@@ -174,15 +183,8 @@ body {
                     <li class="menu-item"><a href="{:U('Role/add')}" target="main-frame">添加角色</a></li>
                     <li class="menu-item"><a href="{:U('Permission/index')}" target="main-frame">权限列表</a></li>
                     <li class="menu-item"><a href="{:U('Permission/add')}" target="main-frame">添加权限</a></li>
-                </ul>
-            </li>
-            <li class="explode" key="08_members" name="menu">
-            文章管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Article/index')}" target="main-frame">文章列表</a></li>
-                    <li class="menu-item"><a href="{:U('Article/add')}" target="main-frame">添加文章</a></li>
-                    <li class="menu-item"><a href="{:U('ArticleCategory/index')}" target="main-frame">文章分类</a></li>
-                    <li class="menu-item"><a href="{:U('ArticleCategory/add')}" target="main-frame">新建分类</a></li>
+                    <li class="menu-item"><a href="{:U('Admin/index')}" target="main-frame">管理员列表</a></li>
+                    <li class="menu-item"><a href="{:U('Admin/add')}" target="main-frame">添加管理员</a></li>
                 </ul>
             </li>
         </ul>
