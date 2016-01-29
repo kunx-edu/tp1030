@@ -78,8 +78,6 @@ class PermissionModel extends \Think\Model {
      */
     public function getList($field='*',array $where = array(), $is_ajax=false) {
         $where['status'] = array('gt', 0);
-        //5.获取满足条件的总行数
-        $count           = $this->where($where)->count();
 
         $rows = $this->field($field)->order('lft')->where($where)->select();
         if ($is_ajax) {

@@ -102,4 +102,20 @@ class RoleModel extends \Think\Model{
         $this->commit();
         return true;
     }
+    
+    /**
+     * 获取所有的启用的角色
+     * @param array $where 条件
+     * @param boolean $is_ajax 是否返回json
+     * @return string|array
+     */
+    public function getList($field='*',array $where = array(), $is_ajax=false) {
+        $where['status'] = array('gt', 0);
+        $rows = $this->field($field)->where($where)->select();
+        if ($is_ajax) {
+            return json_encode($rows);
+        } else {
+            return $rows;
+        }
+    }
 }
