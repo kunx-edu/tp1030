@@ -7,25 +7,25 @@ namespace Admin\Model;
  * @author kunx
  */
 class GoodsModel extends \Think\Model\RelationModel {
+
     /**
      * 商品状态配置数组
      * @var type 
      */
     public static $statuses = array(
-        1=>'精品',
-        2=>'新品',
-        4=>'热销',
+        1 => '精品',
+        2 => '新品',
+        4 => '热销',
     );
-    
+
     /**
      * 商品上下架配置。
      * @var type 
      */
-    public static $isOnSale = array(
-        1=>'在售',
-        0=>'下架',
+    public static $isOnSale  = array(
+        1 => '在售',
+        0 => '下架',
     );
-
     protected $patchValidate = true; //开启批量验证
     protected $_validate     = array(
         array('name', 'require', '名称不能为空'),
@@ -56,14 +56,14 @@ class GoodsModel extends \Think\Model\RelationModel {
      * 关联模型
      */
     protected $_link = array(
-        'GoodsIntro' => array(
+        'GoodsIntro'   => array(
             'mapping_type' => self::HAS_ONE,
             'foreign_key'  => 'goods_id',
 //            'class_name'=>'GoodsIntro',
         ),
-        'GoodsGallery'=>array(
-            'mapping_type'=>self::HAS_MANY,
-            'foreign_key'=>'goods_id',
+        'GoodsGallery' => array(
+            'mapping_type' => self::HAS_MANY,
+            'foreign_key'  => 'goods_id',
         ),
     );
 
@@ -92,61 +92,67 @@ class GoodsModel extends \Think\Model\RelationModel {
      */
     public function add() {
         $this->startTrans();
-        $flag = true; //是否成功
         unset($this->data['id']);
         //取得新增记录的主键值
-        if ($id   = parent::add()) {
-            //计算货号
-            $sn = date('Ymd') . str_pad($id, 9, '0', STR_PAD_LEFT);
-            $this->where(array('id' => $id));
-            if (parent::save(array('sn' => $sn)) === false) {
-                $flag = false;
-            }
-
-            //将详细信息保存到goods_intro表中
-            $intro = array(
-                'goods_id' => $id,
-                'content'  => I('post.content', '', false),
-            );
-
-            if (D('GoodsIntro')->add($intro) === false) {
-                $flag = false;
-            }
-
-            //将商品的相册图片保存到数据表中
-            $gallery = array();
-            foreach (I('post.path','',false) as $path) {
-                $gallery[] = array(
-                    'goods_id' => $id,
-                    'path'     => $path,
-                );
-            }
-            if (!empty($gallery)) {
-                if (M('GoodsGallery')->addAll($gallery) === false) {
-                    $flag = false;
-                }
-            }
-            
-            //将关联文章保存到数据表中
-            $articles = array();
-            foreach (I('post.article_ids','',false) as $path) {
-                $articles[] = array(
-                    'goods_id' => $id,
-                    'article_id'     => $path,
-                );
-            }
-            if (!empty($articles)) {
-                $article_model = M('GoodsArticle');
-                if ($article_model->addAll($articles) === false) {
-                    $flag = false;
-                }
-            }
-        }
-        if ($flag) {
-            $this->commit();
-        } else {
+        if (($id = parent::add()) === false) {
             $this->rollback();
+            $this->error = '商品添加失败';
+            return false;
         }
+        //计算货号
+        $sn = date('Ymd') . str_pad($id, 9, '0', STR_PAD_LEFT);
+        $this->where(array('id' => $id));
+        if (parent::save(array('sn' => $sn)) === false) {
+            $this->rollback();
+            $this->error = '货号保存失败';
+            return false;
+        }
+
+        //将详细信息保存到goods_intro表中
+        $intro = array(
+            'goods_id' => $id,
+            'content'  => I('post.content', '', false),
+        );
+
+        if (D('GoodsIntro')->add($intro) === false) {
+            $this->rollback();
+            $this->error = '商品详情保存失败';
+            return false;
+        }
+
+        //将商品的相册图片保存到数据表中
+        $gallery = array();
+        foreach (I('post.path', '', false) as $path) {
+            $gallery[] = array(
+                'goods_id' => $id,
+                'path'     => $path,
+            );
+        }
+        if (!empty($gallery)) {
+            if (M('GoodsGallery')->addAll($gallery) === false) {
+                $this->rollback();
+                $this->error = '商品相册保存失败';
+                return false;
+            }
+        }
+
+        //将关联文章保存到数据表中
+        $articles = array();
+        foreach (I('post.article_ids', '', false) as $path) {
+            $articles[] = array(
+                'goods_id'   => $id,
+                'article_id' => $path,
+            );
+        }
+        if (!empty($articles)) {
+            $article_model = M('GoodsArticle');
+            if ($article_model->addAll($articles) === false) {
+                $this->rollback();
+                $this->error = '关联文章保存失败';
+                return false;
+            }
+        }
+        $this->commit();
     }
 
     /**
@@ -156,71 +162,70 @@ class GoodsModel extends \Think\Model\RelationModel {
      */
     public function save() {
         $request_data = $this->data;
-        $flag = true;
-        if (parent::save() !== false) {
-            //商品详细描述的信息
-            $data = array(
-                'content'  => I('post.content', '', false),
-                'goods_id' => $request_data['id'],
-            );
-            if(D('GoodsIntro')->save($data) === false){
-                $flag = false;
-            }
-            
-            //将商品的相册图片保存到数据表中
-            $gallery = array();
-            foreach (I('post.path','',false) as $path) {
-                $gallery[] = array(
-                    'goods_id' => $request_data['id'],
-                    'path'     => $path,
-                );
-            }
-//            var_dump($gallery);
-//            exit;
-            if (!empty($gallery)) {
-                if (M('GoodsGallery')->addAll($gallery) === false) {
-                    $flag = false;
-                }
-            }
-            
-            //将关联文章保存到数据表中
-            $articles = array();
-            foreach (I('post.article_ids','',false) as $path) {
-                $articles[] = array(
-                    'goods_id' => $request_data['id'],
-                    'article_id'     => $path,
-                );
-            }
-            $article_model = M('GoodsArticle');
-            $article_model->where(array('goods_id'=>$request_data['id']))->delete();
-            if (!empty($articles)) {
-                if ($article_model->addAll($articles) === false) {
-                    $flag = false;
-                }
-            }
-        }else{
-            $flag=false;
+        if (parent::save() === false) {
+            $this->error = '商品保存失败';
+            return false;
         }
-        return $flag;
+        //商品详细描述的信息
+        $data = array(
+            'content'  => I('post.content', '', false),
+            'goods_id' => $request_data['id'],
+        );
+        if (D('GoodsIntro')->save($data) === false) {
+            $this->error = '商品详情保存失败';
+            return false;
+        }
+
+        //将商品的相册图片保存到数据表中
+        $gallery = array();
+        foreach (I('post.path', '', false) as $path) {
+            $gallery[] = array(
+                'goods_id' => $request_data['id'],
+                'path'     => $path,
+            );
+        }
+        if (!empty($gallery)) {
+            if (M('GoodsGallery')->addAll($gallery) === false) {
+                $this->error = '商品相册保存失败';
+                return false;
+            }
+        }
+
+        //将关联文章保存到数据表中
+        $articles = array();
+        foreach (I('post.article_ids', '', false) as $path) {
+            $articles[] = array(
+                'goods_id'   => $request_data['id'],
+                'article_id' => $path,
+            );
+        }
+        $article_model = M('GoodsArticle');
+        $article_model->where(array('goods_id' => $request_data['id']))->delete();
+        if (!empty($articles)) {
+            if ($article_model->addAll($articles) === false) {
+                $this->error = '关联文章保存失败';
+                return false;
+            }
+        }
+        return true;
     }
 
-    
-    public function getList($where,$size){
+    public function getList($where, $size) {
         //获取所有的品牌
-        $brands = D('Brand')->field('id,name')->where(array('status'=>array('egt',0)))->select();
-        $suppliers = D('Supplier')->field('id,name')->where(array('status'=>array('egt',0)))->select();
-        $brands = get_data_by_column($brands, 'id');
+        $brands    = D('Brand')->field('id,name')->where(array('status' => array('egt', 0)))->select();
+        $suppliers = D('Supplier')->field('id,name')->where(array('status' => array('egt', 0)))->select();
+        $brands    = get_data_by_column($brands, 'id');
         $suppliers = get_data_by_column($suppliers, 'id');
         $count     = $this->where($where)->count();
-        $rows = $this->where($where)->page(I('get.p', 1), $size)->select();
+        $rows      = $this->where($where)->page(I('get.p', 1), $size)->select();
         foreach ($rows as $key => $value) {
-            $rows[$key]['is_best'] = $value['goods_status'] & 1 ? 1 : 0;
-            $rows[$key]['is_new']  = $value['goods_status'] & 2 ? 1 : 0;
-            $rows[$key]['is_hot']  = $value['goods_status'] & 4 ? 1 : 0;
-            $rows[$key]['brand_name'] = $brands[$value['brand_id']]['name'];
+            $rows[$key]['is_best']       = $value['goods_status'] & 1 ? 1 : 0;
+            $rows[$key]['is_new']        = $value['goods_status'] & 2 ? 1 : 0;
+            $rows[$key]['is_hot']        = $value['goods_status'] & 4 ? 1 : 0;
+            $rows[$key]['brand_name']    = $brands[$value['brand_id']]['name'];
             $rows[$key]['supplier_name'] = $suppliers[$value['supplier_id']]['name'];
         }
-        return array($count,$rows);
+        return array($count, $rows);
     }
-}
 
+}
