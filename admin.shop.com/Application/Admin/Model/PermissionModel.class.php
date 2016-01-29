@@ -10,32 +10,33 @@ class PermissionModel extends \Think\Model {
 
     protected $patchValidate = true; //开启批量验证
     protected $_validate     = array(
-//        array('name','require','名称不能为空'),
-//	array('path','require','URL不能为空'),
-//	array('parent_id','require','父分类不能为空'),
-//	array('lft','require','左边界不能为空'),
-//	array('rght','require','右边界不能为空'),
-//	array('level','require','级别不能为空'),
-//	array('status','require','状态@radio|1=是&0=否不能为空'),
-//	array('sort','require','排序不能为空')
+        array('name', 'require', '名称不能为空'),
+        array('path', 'require', 'URL不能为空'),
+        array('parent_id', 'require', '父权限不能为空'),
+        array('status', 'require', '状态不能为空'),
+        array('sort', 'require', '排序不能为空')
     );
 
     /**
+     * 设定状态,如果是删除，把后代权限也删除。
      * @param int|array $id
      * @param int $status
      */
-    public function changeStatus($id, $status = -1) {
+    public function changeStatus($id, $status = 0) {
+        $row            = $this->field('lft,rght')->find($id);
         //如果id不是数组，就转换成数组，以便后面使用统一的tp的where数组格式。
-        if (!is_array($id)) {
-            $id = array($id);
-        }
         //1.如果status是-1，那么就将原来的名字后添加_del
-        if ($status == -1) {
-            $data['name'] = array('exp', 'concat(name,"_del")');
-        }
         $data['status'] = $status;
         //2.执行数据的更新操作。
-        return D('Brand')->where(array('id' => array('in', $id)))->setField($data);
+        if ($status == 0) {
+            $cond = array(
+                'lft'  => array('egt', $row['lft']),
+                'rght' => array('elt', $row['rght'])
+            );
+        } else {
+            $cond = array('id' => $id);
+        }
+        return $this->where($cond)->setField($data);
     }
 
     /**
@@ -67,6 +68,7 @@ class PermissionModel extends \Think\Model {
             $nested_sets = new \Admin\Service\NestedSets($db, 'permission', 'lft', 'rght', 'parent_id', 'id', 'level');
             $nested_sets->moveUnder($this->data['id'], $data['parent_id'], 'bottom');
         }
+        $data['name'] .= '_del';
         $this->save($data); //保存用户提交的数据，由于用户没有提交节点和层级，所以不会导致数据被破坏
     }
 
@@ -76,8 +78,10 @@ class PermissionModel extends \Think\Model {
      * @param boolean $is_ajax 是否返回json
      * @return string|array
      */
-    public function getList($field='*',array $where = array(), $is_ajax=false) {
-        $where['status'] = array('gt', 0);
+    public function getList($field = '*', array $where = array(), $is_ajax = false) {
+        //权限删除后仍旧可以看到，所以这里执行条件的合并，如果想看所有的，就在调用的时候传递status数组
+        $tmp['status'] = array('gt', 0);
+        $where = array_merge($tmp,$where);
 
         $rows = $this->field($field)->order('lft')->where($where)->select();
         if ($is_ajax) {

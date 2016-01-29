@@ -44,7 +44,7 @@ class ArticleController extends \Think\Controller {
         $page->setConfig('theme', C('PAGE_THEME'));
         $page_html = $page->show();
         
-        $rows = $model->where($where)->page(I('get.p',1),$size)->select();
+        $rows = $model->relation(true)->where($where)->page(I('get.p',1),$size)->select();
         //3.展示数据
         $this->assign('rows', $rows);
         $this->assign('keyword', $keyword);

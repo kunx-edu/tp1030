@@ -33,21 +33,20 @@
                         <th>录入时间</th>
                         <th>操作</th>
                     </tr>
-                    <tbody class="list-data">
                     <foreach name="rows" item="row">
-                    <tr><td align='center'>{$row.name}</td>
-                        <td align='center'>{$row.article_category_id}</td>
-                        <td align='center'>{$row.intro}</td>
-                        <td align='center'>{$row.status}</td>
-                        <td align='center'>{$row.sort}</td>
-                        <td align='center'>{$row.inputtime|date="Y-m-d",###}</td>
-                        <td align='center'>
-                            <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
-                            <a href="{:U('chageStatus',array('id'=>$row['id']))}" title="移除">移除</a> 
-                        </td>
-                    </tr>
+                        <tr>
+                            <td align='center'>{$row.name}</td>
+                            <td align='center'>{$row.ArticleCategory.name}</td>
+                            <td align='center'>{$row.intro}</td>
+                            <td align='center'><img src="__IMG__/{$row.status}.gif"/></td>
+                            <td align='center'>{$row.sort}</td>
+                            <td align='center'>{$row.inputtime|date="Y-m-d",###}</td>
+                            <td align='center'>
+                                <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
+                                <a href="{:U('chageStatus',array('id'=>$row['id']))}" title="移除">移除</a> 
+                            </td>
+                        </tr>
                     </foreach>
-                    </tbody>
                     <tr>
                         <td align="right" nowrap="true" colspan="7">
                             <div id="turn-page" class="page">

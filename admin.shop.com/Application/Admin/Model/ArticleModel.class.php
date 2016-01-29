@@ -24,6 +24,11 @@ class ArticleModel extends \Think\Model\RelationModel{
             'mapping_type'=>self::HAS_ONE,
             'foreign_key'=>'article_id',
         ),
+        'ArticleCategory'=>array(
+            'mapping_type'=>self::BELONGS_TO,
+            'foreign_key'=>'article_category_id',
+            'parent_key'=>'id',
+        ),
         
     );
     /**

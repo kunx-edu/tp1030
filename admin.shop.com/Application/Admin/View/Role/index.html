@@ -29,7 +29,7 @@
                     <tr>
                         <td align='center'>{$row.name}</td>
                         <td align='center'>{$row.intro}</td>
-                        <td align='center'>{$row.status}</td>
+                        <td align='center'><img src="__IMG__/{$row.status}.gif"/></td>
                         <td align='center'>{$row.sort}</td>
                         <td align='center'><a href='{:U("edit",array("id"=>$row["id"]))}'>编辑</a> | <a href='{:U("changeStatus",array("id"=>$row["id"]))}'>删除</a></td>
                     </tr>

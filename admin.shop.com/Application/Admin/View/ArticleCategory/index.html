@@ -18,13 +18,23 @@
             <div class="list-div" id="listDiv">
                 <table cellpadding="3" cellspacing="1">
                     <tr>
-                        <th>名称</th><th>是否帮助类</th><th>简介</th><th>状态</th><th>排序</th>
+                        <th>名称</th>
+                        <th>是否帮助类</th>
+                        <th>简介</th>
+                        <th>状态</th>
+                        <th>排序</th>
+                        <th>操作</th>
                     </tr>
-                    <tbody class="list-data">
                     <foreach name="rows" item="row">
-                    <tr><td align='center'>{$row.name}</td><td align='center'>{$row.is_help}</td><td align='center'>{$row.intro}</td><td align='center'>{$row.status}</td><td align='center'>{$row.sort}</td></tr>
+                    <tr>
+                        <td align='center'>{$row.name}</td>
+                        <td align='center'>{$row['is_help']?'是':'否'}</td>
+                        <td align='center'>{$row.intro}</td>
+                        <td align='center'><img src="__IMG__/{$row.status}.gif"/></td>
+                        <td align='center'>{$row.sort}</td>
+                        <td align='center'><a href="{:U('edit',array('id'=>$row['id']))}">编辑</a></td>
+                    </tr>
                     </foreach>
-                    </tbody>
                 </table>
             </div>
 

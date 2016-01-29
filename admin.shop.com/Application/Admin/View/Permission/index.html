@@ -22,6 +22,7 @@
                         <th>名称</th>
                         <th>URL</th>
                         <th>简介</th>
+                        <th>状态</th>
                         <th>排序</th>
                         <th>操作</th>
                     </tr>
@@ -30,8 +31,9 @@
                         <td>{$row.name}</td>
                         <td align='center'>{$row.path}</td>
                         <td align='center'>{$row.intro}</td>
+                        <td align='center'><img src="__IMG__/{$row.status}.gif" style="cursor: pointer" onclick="location.href='{:U('changeStatus',array('id'=>$row['id'],'status'=>1-$row['status']))}'"/></td>
                         <td align='center'>{$row.sort}</td>
-                        <td align='center'><a href="{:U('edit',array('id'=>$row['id']))}">编辑</a> | <a href="#">删除</a></td>
+                        <td align='center'><a href="{:U('edit',array('id'=>$row['id']))}">编辑</a> | <a href="{:U('changeStatus',array('id'=>$row['id']))}">删除</a></td>
                     </tr>
                     </foreach>
                 </table>

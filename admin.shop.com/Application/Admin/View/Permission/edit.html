@@ -56,15 +56,16 @@
                             <input type="text" name="intro" maxlength="60" value="{$row.intro}" />
                         </td>
                     </tr>
-                    <tr>
-                        <td class='label'>状态</td> 
+                    <empty name="row.id">
+                        <tr>
+                            <td class='label'>状态</td> 
 
-                        <td>
-                            <input type='radio' name='status' class="status" value='1'/>是 
-                            <input type='radio' name='status' class="status" value='0'/>否 
-                        </td> 
-
-                    </tr> 
+                            <td>
+                                <input type='radio' name='status' class="status" value='1'/>是 
+                                <input type='radio' name='status' class="status" value='0'/>否 
+                            </td> 
+                        </tr> 
+                    </empty>
                     <tr>
                         <td class="label">排序</td>
                         <td>
@@ -90,8 +91,7 @@
         <js href="__EXT__/ztree/js/jquery.ztree.core-3.5.js" />
         <script type="text/javascript">
             $(function() {
-                var rows = {$rows};
-                $('.status').val([{$row.status|default=1}]);//选中指定的选项
+                
                     
                 var setting = {
                     data: {
@@ -112,13 +112,13 @@
                 //如果是新增，就展开所有，如果是编辑，只展开到父级分类就可以了
                 var tree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
                 <empty name="row.id">
-                    tree_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
+                    $('.status').val([{$row.status|default=1}]);//选中指定的选项
+                    tree_obj.expandAll(true); //使用ztree展示树状结构，并展开所有的节点。
                 <else />
-                    var pobj = tree_obj.getNodeByParam("id", {$row.parent_id});{/*找到父级分类节点*/}
-                    tree_obj.selectNode(pobj);{/*选中父级分类节点*/}
-                    console.debug(pobj);
-                    $('.cname').val(pobj.name);{/*显示用户点击的是什么分类*/}
-                    $('.parent_id').val(pobj.id);{/*将父级分类放到隐藏域中*/}
+                    var pobj = tree_obj.getNodeByParam("id", {$row.parent_id});
+                    tree_obj.selectNode(pobj);
+                    $('.cname').val(pobj.name);
+                    $('.parent_id').val(pobj.id);
                 </empty>
             });
         </script>

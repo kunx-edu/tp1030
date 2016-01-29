@@ -32,7 +32,7 @@ class PermissionController extends \Think\Controller {
         $model = D('Permission');
         //2.获取数据
         //3.展示数据
-        $this->assign('rows',$model->getList('id,name,parent_id'));
+        $this->assign('rows',$model->getList('id,name,parent_id,path,intro,sort,level,status',array('status'=>array('egt',0))));
 
         $this->display();
     }
@@ -57,7 +57,7 @@ class PermissionController extends \Think\Controller {
             }
         } else {
             //2.如果不是就展示
-            $rows = $model->getList(array(),true);
+            $rows = $model->getList('*',array(),true);
             $this->assign('rows',$rows);
             $this->display('edit');
         }
@@ -82,7 +82,7 @@ class PermissionController extends \Think\Controller {
             //1.根据id获取数据表中的数据
             $row = $model->find($id);
             $this->assign('row', $row);
-            $rows = $model->getList(array(),true);
+            $rows = $model->getList('id,name,parent_id',array(),true);
             $this->assign('rows',$rows);
             $this->display();
         }
@@ -93,13 +93,9 @@ class PermissionController extends \Think\Controller {
      * @param type $id
      * @param type $status
      */
-    public function changeStatus($id, $status = -1) {
+    public function changeStatus($id, $status = 0) {
         $model = D('Permission');
-        $data  = array('status' => $status);
-        if ($status == -1) {
-            $data['name'] = array('exp', 'concat(name,"_del")');
-        }
-        $flag = $model->where(array('id' => $id))->setField($data);
+        $flag = $model->changeStatus($id,$status);
         if ($flag !== false) {
             $this->success('修改成功');
         } else {
