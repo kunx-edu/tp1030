@@ -37,16 +37,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="label">URL</td>
+                        <td class="label">path</td>
                         <td>
-                            <input type="text" name="path" maxlength="60" value="{$row.path}" />
+                            <input type="text" name="path" maxlength="60" value="{$row.path}" placeholder="module/controller/action"/>
                         </td>
                     </tr>
                     <tr>
-                        <td class="label">父权限</td>
+                        <td class="label">父菜单</td>
                         <td>
                             <input type="text" class="cname" value="请选择" readonly='readonly'/>
                             <input type="hidden" name='parent_id' class='parent_id' value="{$row.parent_id|default=0}"/>
+                            <ul id="treeMenu" class="ztree"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">权限</td>
+                        <td>
+                            <div class="permission_ids">
+                            </div>
                             <ul id="treeDemo" class="ztree"></ul>
                         </td>
                     </tr>
@@ -58,12 +66,10 @@
                     </tr>
                     <tr>
                         <td class='label'>状态</td> 
-
                         <td>
-                            <input type='radio' name='status' class="status" value='1'/>是 
-                            <input type='radio' name='status' class="status" value='0'/>否 
+                            <input type='radio' class="status" name='status' value='1'/>是 
+                            <input type='radio' class="status" name='status' value='0'/>否 
                         </td> 
-
                     </tr> 
                     <tr>
                         <td class="label">排序</td>
@@ -88,12 +94,46 @@
         </div>
         <js href="__JS__/jquery.min.js" />
         <js href="__EXT__/ztree/js/jquery.ztree.core-3.5.js" />
+        <js href="__EXT__/ztree/js/jquery.ztree.excheck-3.5.min.js" />
         <script type="text/javascript">
             $(function() {
-                var rows = {$rows};
                 $('.status').val([{$row.status|default=1}]);//选中指定的选项
-                    
                 var setting = {
+                    check:{
+                        enable:true,
+                         chkboxType:{ "Y" : "s", "N" : "s" },
+                    },
+                    data: {
+                        simpleData: {
+                            enable: true,
+                            pIdKey: 'parent_id',
+                        }
+                    },
+                    callback: {
+                        onClick: function(event, ele_obj, ztree_node, click_type) {
+                            $('.cname').val(ztree_node.name);//显示用户点击的是什么分类
+                            $('.parent_id').val(ztree_node.id);//将父级分类放到隐藏域中
+                        },
+                        onCheck: function(event,tree_id,node){
+                            //获取所有的已选择的节点
+                            var nodes = tree_obj.getCheckedNodes();
+                            //清空隐藏域中的内容
+                            $('.permission_ids').empty();
+                            //遍历所有正常选中（不包括半选）的选项，将其放到隐藏域中
+                            $(nodes).each(function(){
+                                var status = this.getCheckStatus().half;
+                                if(!status){
+                                    var html = "<input type='hidden' name='permission_ids[]' value='"+this.id+"'/>";
+                                    $(html).appendTo($('.permission_ids'));
+                                }
+                            });
+                        },
+                    }
+                };
+                var zNodes = {$all_permissions};
+                var menus = {$all_menu};
+                
+                var menu_setting = {
                     data: {
                         simpleData: {
                             enable: true,
@@ -107,18 +147,28 @@
                         },
                     }
                 };
-                var zNodes = {$rows};
 
                 //如果是新增，就展开所有，如果是编辑，只展开到父级分类就可以了
                 var tree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                var menu_obj = $.fn.zTree.init($("#treeMenu"), menu_setting, menus);
                 <empty name="row.id">
                     tree_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
+                    menu_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
                 <else />
-                    var pobj = tree_obj.getNodeByParam("id", {$row.parent_id});{/*找到父级分类节点*/}
-                    tree_obj.selectNode(pobj);{/*选中父级分类节点*/}
+                    var pobj = menu_obj.getNodeByParam("id", {$row.parent_id});{/*找到父级分类节点*/}
+                    menu_obj.selectNode(pobj);{/*选中父级分类节点*/}
                     console.debug(pobj);
                     $('.cname').val(pobj.name);{/*显示用户点击的是什么分类*/}
                     $('.parent_id').val(pobj.id);{/*将父级分类放到隐藏域中*/}
+                    
+                    var perms = {$perms};
+                    $(perms).each(function(){
+                        var pobj = tree_obj.getNodeByParam("id", this.permission_id);{/*找到父级分类节点*/}
+                        //选中选择的节点
+                        tree_obj.checkNode(pobj,true,false,true);{/*选中父级分类节点*/}
+                        //展开选择的节点
+                        tree_obj.expandNode(pobj,true,false);
+                    });
                 </empty>
             });
         </script>
