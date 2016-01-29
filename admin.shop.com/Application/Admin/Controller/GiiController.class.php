@@ -107,6 +107,7 @@ class GiiController extends \Think\Controller {
             //1.1引入控制器模板，替换特定字符串
             $name       = I('post.name');
             $module     = I('post.module');
+            $title     = I('post.title');
             $model      = M();
             $table_info = $model->query('SHOW FULL COLUMNS FROM ' . parse_name($name, 0));
             $thead      = '';
@@ -145,7 +146,7 @@ class GiiController extends \Think\Controller {
                     }
                 }
                 //表头部分
-                $thead .= '<th>' . $field['title'] . '</th>';
+                $thead .= '<th>' . $field['title'] . '</th>' ."\r\n";
                 
                 $tbody .= $this->tag($field['type'], $field['title'], $info['field'], $field['param']);
             }
@@ -167,7 +168,7 @@ class GiiController extends \Think\Controller {
             $tpl_file    = MODULE_PATH . 'View/Gii/index.tpl';
             $content     = file_get_contents($tpl_file);
             $tbody_index = '<tr>' . $tbody_index . '</tr>';
-            $content     = str_replace(array('%thead%','%tbody%'), array($thead,$tbody_index), $content);
+            $content     = str_replace(array('%title%','%thead%','%tbody%'), array($title,$thead,$tbody_index), $content);
             $output_path = APP_PATH . $module . '/View/'.$name . '/';
             $output_file = $output_path . 'index.html';
             if (!is_dir($output_path)) {
@@ -185,25 +186,25 @@ class GiiController extends \Think\Controller {
             case 'text':
                 $html .= <<<HTML
                 <tr>
-                        <td class="label">$title</td>
-                        <td>
-                            <input type="text" name="$field" maxlength="60" value="{\$row.$field}" />
-                        </td>
+                        \t<td class="label">$title</td>
+                        \t<td>
+                            \t<input type="text" name="$field" maxlength="60" value="{\$row.$field}" />
+                        \t</td>
                     </tr>
 HTML;
                 break;
             case 'radio':
                 $html .= "<tr>
-                        <td class='label'>$title</td>
+                        \t<td class='label'>$title</td> \r\n
                         <td>";
                 foreach ($params as $key => $value) {
                     $html.="<input type='radio' name='$field' value='$key'/>$value ";
                 }
-                $html .= '</td>
-                    </tr>';
+                $html .= "</td> \r\n
+                    </tr> \r\n";
                 break;
             case 'textarea':
-                $html .= "<textarea name='$field'>{\$row.$field}</textarea>";
+                $html .= "\t<textarea name='$field'>{\$row.$field}</textarea> \r\n";
                 break;
         }
         return $html;

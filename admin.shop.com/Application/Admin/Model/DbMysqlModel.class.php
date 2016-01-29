@@ -28,9 +28,16 @@ class DbMysqlModel implements DbMysqlInt {
         echo __METHOD__ . '<br />';
     }
 
+    /**
+     * 获取一行数据的第一列。
+     * @param string $sql sql结构
+     * @param array $args 参数，还有更多
+     * @return mixed
+     */
     public function getOne($sql, array $args = array()) {
-//        var_dump(func_get_args());
-        echo __METHOD__ . '<br />';
+        $sql  = $this->buildSql(func_get_args());
+        $rows = M()->query($sql);
+        return array_shift(array_shift($rows));
     }
 
     /**
