@@ -70,12 +70,18 @@ class PermissionModel extends \Think\Model {
         $this->save($data); //保存用户提交的数据，由于用户没有提交节点和层级，所以不会导致数据被破坏
     }
 
-    public function getList($where = array(), $is_ajax) {
+    /**
+     * 获取所有的启用的权限
+     * @param array $where 条件
+     * @param boolean $is_ajax 是否返回json
+     * @return string|array
+     */
+    public function getList($field='*',array $where = array(), $is_ajax=false) {
         $where['status'] = array('gt', 0);
         //5.获取满足条件的总行数
         $count           = $this->where($where)->count();
 
-        $rows = $this->order('lft')->where($where)->select();
+        $rows = $this->field($field)->order('lft')->where($where)->select();
         if ($is_ajax) {
             return json_encode($rows);
         } else {
