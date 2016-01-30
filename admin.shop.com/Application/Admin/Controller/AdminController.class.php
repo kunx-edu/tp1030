@@ -83,7 +83,7 @@ class AdminController extends \Think\Controller {
         $model = D('Admin');
         if (IS_POST) {
             if ($model->create()) {
-                if ($model->save() !== false) {
+                if ($model->saveAdmin() !== false) {
                     $this->success('修改成功', cookie('forward'));
                 } else {
                     $this->error('修改失败');

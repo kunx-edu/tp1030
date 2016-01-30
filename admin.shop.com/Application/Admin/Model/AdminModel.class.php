@@ -24,10 +24,10 @@ class AdminModel extends \Think\Model {
      * TODO：自动完成
      */
     protected $_auto = array(
-        array('salt','\Org\Util\String::randString',self::MODEL_BOTH,'function',array(6)),
+        array('salt','\Org\Util\String::randString',self::MODEL_INSERT,'function',array(6)),
         array('add_time',NOW_TIME,self::MODEL_INSERT),
-        array('last_login_time',NOW_TIME,self::MODEL_UPDATE),
-        array('last_login_ip','get_client_ip',self::MODEL_UPDATE,'function',array(1)),
+//        array('last_login_time',NOW_TIME,self::MODEL_UPDATE),
+//        array('last_login_ip','get_client_ip',self::MODEL_UPDATE,'function',array(1)),
 //        array('password','kunx_password',self::MODEL_BOTH,'callback'),
     );
     
@@ -57,6 +57,10 @@ class AdminModel extends \Think\Model {
         return D('Brand')->where(array('id' => array('in', $id)))->setField($data);
     }
 
+    /**
+     * 添加管理员
+     * @return boolean
+     */
     public function addAdmin() {
         unset($this->data['id']);
         $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
@@ -72,6 +76,33 @@ class AdminModel extends \Think\Model {
         }
         
         //保存用户-权限中间表
+        if($this->permissionHandler($id)===false){
+            $this->error = '保存权限失败';
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * 添加管理员
+     * @return boolean
+     */
+    public function saveAdmin() {
+        //保存本表数据
+        $id = $this->data['id'];
+        if($this->save() === false){
+            $this->error = '创建管理员失败';
+            return false;
+        }
+        //保存用户-角色中间表
+        M('AdminRole')->where(array('admin_id'=>$id))->delete();
+        if($this->roleHandler($id)===false){
+            $this->error = '保存角色失败';
+            return false;
+        }
+        
+        //保存用户-权限中间表
+        M('AdminPermission')->where(array('admin_id'=>$id))->delete();
         if($this->permissionHandler($id)===false){
             $this->error = '保存权限失败';
             return false;
