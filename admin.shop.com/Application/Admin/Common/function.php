@@ -62,3 +62,27 @@ function get_data_by_column(array $data, $field) {
     }
     return $return;
 }
+
+/**
+ * 获取指定字段的值的数组
+ * @param array $data
+ * @param string $field
+ * @return array
+ */
+function get_data_column(array $data,$field){
+    $return = array();
+    foreach($data as $item){
+        $return[] = $item[$field];
+    }
+    return $return;
+}
+
+/**
+ * 加盐加密。
+ * @param string $pwd 原始密码
+ * @param string $salt 盐
+ * @return string 加盐加密后的密码
+ */
+function my_mcrypt($pwd,$salt){
+    return md5(md5($pwd).$salt);
+}

@@ -17,13 +17,28 @@ class AdminModel extends \Think\Model {
         array('email', 'require', '邮箱不能为空'),
         array('email', 'email', '邮箱不合法'),
         array('repassword', 'password', '两次密码不一致', self::EXISTS_VALIDATE, 'confirm'),
+        array('password', '6,16', '密码长度不合法', self::EXISTS_VALIDATE, 'length'),
     );
 
     /**
      * TODO：自动完成
      */
+    protected $_auto = array(
+        array('salt','\Org\Util\String::randString',self::MODEL_BOTH,'function',array(6)),
+        array('add_time',NOW_TIME,self::MODEL_INSERT),
+        array('last_login_time',NOW_TIME,self::MODEL_UPDATE),
+        array('last_login_ip','get_client_ip',self::MODEL_UPDATE,'function',array(1)),
+//        array('password','kunx_password',self::MODEL_BOTH,'callback'),
+    );
     
-    
+//    protected function kunx_password(){
+//        var_dump($this->data);
+//        exit;
+//    }
+
+
+
+
     /**
      * @param int|array $id
      * @param int $status
@@ -43,14 +58,25 @@ class AdminModel extends \Think\Model {
     }
 
     public function addAdmin() {
+        unset($this->data['id']);
+        $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
         //保存本表数据
-        $id = $this->add();
+        if(($id = $this->add()) === false){
+            $this->error = '创建管理员失败';
+            return false;
+        }
         //保存用户-角色中间表
-        $this->roleHandler($id);
+        if($this->roleHandler($id)===false){
+            $this->error = '保存角色失败';
+            return false;
+        }
         
         //保存用户-权限中间表
-        $this->permissionHandler($id);
-        
+        if($this->permissionHandler($id)===false){
+            $this->error = '保存权限失败';
+            return false;
+        }
+        return true;
     }
     
     
@@ -97,4 +123,34 @@ class AdminModel extends \Think\Model {
         return array('page_html'=>$page_html,'rows'=>$rows);
     }
 
+    
+    /**
+     * 获取指定管理员所拥有的权限列表。
+     * @param integer $admin_id
+     * @param boolean $is_ajax
+     * @return type
+     */
+    public function getPermission($admin_id,$is_ajax=false){
+        $rows = M('AdminPermission')->where(array('admin_id'=>$admin_id))->select();
+        if($is_ajax){
+            return json_encode($rows);
+        }else{
+            return $rows;
+        }
+    }
+    /**
+     * 获取指定管理员所拥有的角色列表。
+     * @param integer $admin_id
+     * @param boolean $is_ajax
+     * @return type
+     */
+    public function getRole($admin_id,$is_ajax=false){
+        $rows = M('AdminRole')->field('role_id')->where(array('admin_id'=>$admin_id))->select();
+        $rows = get_data_column($rows,'role_id');
+        if($is_ajax){
+            return json_encode($rows);
+        }else{
+            return $rows;
+        }
+    }
 }

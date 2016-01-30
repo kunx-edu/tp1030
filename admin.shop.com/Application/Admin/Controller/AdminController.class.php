@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace Admin\Controller;
 
 /**
@@ -21,14 +22,21 @@ class AdminController extends \Think\Controller {
         $this->assign('meta_title', $meta_title);
     }
 
+    private function before_edit_view() {
+        //取出所有的角色
+        $this->assign('all_roles', D('Role')->getList('id,name', array()));
+        //取出所有的权限
+        $this->assign('all_permissions', D('Permission')->getList('id,name,parent_id', array(), true));
+    }
+
     /**
      * 管理员列表.
      * 具备分页功能.
      */
     public function index($keyword = '') {
         //记录当前页面地址，为编辑跳转做准备
-        cookie('forward',__SELF__);
-        
+        cookie('forward', __SELF__);
+
         //1.创建模型
         $model           = D('Admin');
         //2.获取数据
@@ -36,7 +44,7 @@ class AdminController extends \Think\Controller {
         if ($keyword) {
             $where['name'] = array('like', $keyword . '%');
         }
-        $data = $model->getList('*',$where);//获取分页代码，和当前页内容
+        $data = $model->getList('*', $where); //获取分页代码，和当前页内容
         //3.展示数据
         $this->assign($data);
         $this->assign('keyword', $keyword);
@@ -63,10 +71,7 @@ class AdminController extends \Think\Controller {
             }
         } else {
             //2.如果不是就展示
-            //取出所有的角色
-            $this->assign('all_roles',D('Role')->getList('id,name',array()));
-            //取出所有的权限
-            $this->assign('all_permissions',D('Permission')->getList('id,name,parent_id',array(),true));
+            $this->before_edit_view();
             $this->display('edit');
         }
     }
@@ -88,8 +93,14 @@ class AdminController extends \Think\Controller {
             }
         } else {
             //1.根据id获取数据表中的数据
+            $this->before_edit_view();
+            //获取所有的额外权限
+            
+            //获取当前用户关联的角色
             $row = $model->find($id);
             $this->assign('row', $row);
+            $this->assign('perms', $model->getPermission($id,true));
+            $this->assign('roles', $model->getRole($id,true));
             $this->display();
         }
     }
@@ -101,11 +112,11 @@ class AdminController extends \Think\Controller {
      */
     public function changeStatus($id, $status = -1) {
         $model = D('Admin');
-        $data = array('status'=> $status);
-        if($status==-1){
-            $data['name']=array('exp','concat(name,"_del")');
+        $data  = array('status' => $status);
+        if ($status == -1) {
+            $data['name'] = array('exp', 'concat(name,"_del")');
         }
-        $flag  = $model->where(array('id' => $id))->setField($data);
+        $flag = $model->where(array('id' => $id))->setField($data);
         if ($flag !== false) {
             $this->success('修改成功');
         } else {
