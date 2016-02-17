@@ -43,8 +43,8 @@ class MenuController extends \Think\Controller {
      */
     public function add() {
         //1.判断是否是post提交
+        $model = D('Menu');
         if (IS_POST) {
-            $model = D('Menu');
             //1.1判断数据是否合法create
             if ($model->create()) {
                 //1.2插入数据
@@ -59,6 +59,7 @@ class MenuController extends \Think\Controller {
         } else {
             //2.如果不是就展示
             //取出所有的权限
+            $this->assign('all_menu', $model->getList(array('id,name,parent_id'), array(), true));
             $this->assign('all_permissions', D('Permission')->getList('id,name,parent_id', array(), true));
             $this->display('edit');
         }
@@ -71,7 +72,7 @@ class MenuController extends \Think\Controller {
         $model = D('Menu');
         if (IS_POST) {
             if ($model->create()) {
-                if ($model->save() !== false) {
+                if ($model->updateMenu() !== false) {
                     $this->success('修改成功', cookie('forward'));
                 } else {
                     $this->error('修改失败');
@@ -82,12 +83,12 @@ class MenuController extends \Think\Controller {
         } else {
             //1.根据id获取数据表中的数据
             //获取所有的菜单
-            $this->assign('all_menu',$model->getList(array('id,name,parent_id'),array(),true));
+            $this->assign('all_menu', $model->getList(array('id,name,parent_id'), array(), true));
             //获取所有的权限
             //取出所有的权限
-            $this->assign('all_permissions',D('Permission')->getList('id,name,parent_id',array(),true));
+            $this->assign('all_permissions', D('Permission')->getList('id,name,parent_id', array(), true));
             //获取当前关联的权限
-            $this->assign('perms',$model->getPermission($id,true));
+            $this->assign('perms', $model->getPermission($id, true));
             $row = $model->find($id);
             $this->assign('row', $row);
             $this->display();

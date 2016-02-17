@@ -50,6 +50,34 @@ class MenuModel extends \Think\Model{
         return true;
     }
     
+    public function updateMenu(){
+        //编辑的时候先判断是否改变了父级菜单，如果改变了，才使用nestedsets
+        $parent_id = $this->getFieldById($this->data['id'], 'parent_id');
+        if ($parent_id != $this->data['parent_id']) {
+            $db          = D('DbMysql');
+            $nested_sets = new \Admin\Service\NestedSets($db, 'menu', 'lft', 'rght', 'parent_id', 'id', 'level');
+            $id = $nested_sets->moveUnder( $this->data['id'],$this->data['parent_id'], 'bottom');
+            if ($id === false) {
+                $this->error = '菜单更新失败';
+                return false;
+            }
+        }
+        $request_data = $this->data;
+        $this->save();
+        //保存菜单和权限的映射关系
+        $permissions = I('post.permission_ids');
+        //先删除当前菜单对应的权限记录
+        if(M('MenuPermission')->where(array('menu_id'=>$request_data['id']))->delete() === false){
+            $this->error = '菜单权限关系重置失败';
+            return false;
+        }
+        if($this->permissionHandler($request_data['id'], $permissions) === false){
+            $this->error = '菜单权限关联失败';
+            return false;
+        }
+        return true;
+    }
+    
     private function permissionHandler($menu_id,array $permissions){
         //2.将角色和权限的关系存放到角色-权限中间表
         $data = array();

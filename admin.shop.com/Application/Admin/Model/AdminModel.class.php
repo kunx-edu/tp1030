@@ -185,7 +185,23 @@ class AdminModel extends \Think\Model {
         }
     }
     
+    /**
+     * 用户登录。
+     * 验证验证码
+     * 验证用户名
+     * 验证密码
+     * @param string $username 用户名
+     * @param string $password 密码
+     * @return boolean true成功 false失败
+     */
     public function login($username,$password){
+        //判断验证码是否匹配
+        $code = I('post.captcha');
+        $captcha = new \Think\Verify();
+        if($captcha->check($code)===false){
+            $this->error = '验证码不正确';
+            return false;
+        }
         //1.根据用户名获取对应的记录，得到盐和密码
         $row = $this->getByUsername($username);
         if($row){

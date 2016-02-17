@@ -18,14 +18,7 @@ class checkBehavior extends \Think\Behavior {
     public function run(&$params) {
         $url = MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME;
         //忽略验证的请求
-        $ignore = array(
-            'Admin/Admin/login',
-            'Admin/Captcha/captcha',
-            'Admin/Index/index',
-            'Admin/Index/top',
-            'Admin/Index/menu',
-            'Admin/Index/main',
-        );
+        $ignore = C('IGNORE_PATH');
         if(in_array($url, $ignore)){
             return true;
         }
@@ -53,6 +46,12 @@ class checkBehavior extends \Think\Behavior {
             //将权限id和path存到session中
             session('permission_ids', $pids);
             session('paths', $paths);
+            
+            
+            //获取用户可以看到的菜单
+            $sql = 'SELECT DISTINCT `path`,`name`,`level` FROM menu_permission AS mp LEFT JOIN menu AS m ON m.`id`=mp.`menu_id` WHERE permission_id IN ('.$pids_str.') ORDER BY lft ASC';
+            $menus     = M()->query($sql);
+            var_dump($menus);
         }
         
 //        echo $url;

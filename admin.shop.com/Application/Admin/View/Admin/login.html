@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <td colspan="2" align="right">
-                            <img src="" />
+                            <img src="{:U('Captcha/captcha',array('t'=>time()))}" style='width:146px' title="看不清，点击切换" onclick='changeCaptcha(this)'/>
                         </td>
                     </tr>
                     <tr>
@@ -54,5 +54,11 @@
             </td>
         </tr>
     </table>
+    
+    <script type="text/javascript">
+        function changeCaptcha(ele){
+            ele.src="{:U('Captcha/captcha')}"+'?t='+ Math.random();
+        }
+        </script>
 </form>
 </body>

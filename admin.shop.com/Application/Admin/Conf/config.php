@@ -26,4 +26,13 @@ return array(
     'PAGE_SIZE'         => 4,
     'PAGE_THEME'        => '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
     'UPLOAD_PATH'       => APP_PATH . 'Uploads/',
+    //无需验证就可看到的路径
+    'IGNORE_PATH'       => array(
+        'Admin/Admin/login',
+        'Admin/Captcha/captcha',
+        'Admin/Index/index',
+        'Admin/Index/top',
+        'Admin/Index/menu',
+        'Admin/Index/main',
+    ),
 );

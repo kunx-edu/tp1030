@@ -130,6 +130,7 @@ class AdminController extends \Think\Controller {
      */
     public function login(){
         if(IS_POST){
+            //判断验证码是否正确，如果验证码正确，就返回，没有绝对的要求我们也可以写在模型中
             $username = I('post.username');
             $password = I('post.password');
             $model = D('Admin');

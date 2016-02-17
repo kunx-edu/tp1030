@@ -22,7 +22,7 @@
     </head>
     <body>
         <h1>
-            <span class="action-span"><a href="{:U('index')}">品牌管理</a></span>
+            <span class="action-span"><a href="{:U('index')}">菜单管理</a></span>
             <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
             <span id="search_id" class="action-span1"> - {$meta_title} </span>
         </h1>
@@ -155,20 +155,21 @@
                     tree_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
                     menu_obj.expandAll(true);//使用ztree展示树状结构，并展开所有的节点。
                 <else />
-                    var pobj = menu_obj.getNodeByParam("id", {$row.parent_id});{/*找到父级分类节点*/}
-                    menu_obj.selectNode(pobj);{/*选中父级分类节点*/}
-                    console.debug(pobj);
-                    $('.cname').val(pobj.name);{/*显示用户点击的是什么分类*/}
-                    $('.parent_id').val(pobj.id);{/*将父级分类放到隐藏域中*/}
-                    
+                    if({$row.parent_id}){
+                        var pobj = menu_obj.getNodeByParam("id", {$row.parent_id});{/*找到父级分类节点*/}
+                        menu_obj.selectNode(pobj);{/*选中父级分类节点*/}
+                        console.debug(pobj);
+                        $('.cname').val(pobj.name);{/*显示用户点击的是什么分类*/}
+                        $('.parent_id').val(pobj.id);{/*将父级分类放到隐藏域中*/}
+                    }
                     var perms = {$perms};
-                    $(perms).each(function(){
-                        var pobj = tree_obj.getNodeByParam("id", this.permission_id);{/*找到父级分类节点*/}
-                        //选中选择的节点
-                        tree_obj.checkNode(pobj,true,false,true);{/*选中父级分类节点*/}
-                        //展开选择的节点
-                        tree_obj.expandNode(pobj,true,false);
-                    });
+                        $(perms).each(function(){
+                            var pobj = tree_obj.getNodeByParam("id", this.permission_id);{/*找到父级分类节点*/}
+                            //选中选择的节点
+                            tree_obj.checkNode(pobj,true,false,true);{/*选中父级分类节点*/}
+                            //展开选择的节点
+                            tree_obj.expandNode(pobj,true,false);
+                        });
                 </empty>
             });
         </script>
