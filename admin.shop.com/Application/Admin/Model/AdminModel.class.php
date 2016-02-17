@@ -184,4 +184,25 @@ class AdminModel extends \Think\Model {
             return $rows;
         }
     }
+    
+    public function login($username,$password){
+        //1.根据用户名获取对应的记录，得到盐和密码
+        $row = $this->getByUsername($username);
+        if($row){
+            //2.有记录，说明用户名是存在的，进行密码验证
+            $salt = $row['salt'];
+            $db_password = $row['password'];
+            session('USERINFO',$row);
+            //3.使用加盐加密进行验证
+            if(my_mcrypt($password, $salt)==$db_password){
+                return true;//验证通过，用户名和密码匹配
+            }else{
+                $this->error = '密码不正确';
+                return false;
+            }
+        }else{
+            $this->error = '用户名不存在';
+            return false;
+        }
+    }
 }

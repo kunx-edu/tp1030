@@ -123,5 +123,24 @@ class AdminController extends \Think\Controller {
             $this->error('修改失败');
         }
     }
+    
+    /**
+     * 如果验证通过，就跳转到后台首页
+     * 如果验证不通过，就返回前页
+     */
+    public function login(){
+        if(IS_POST){
+            $username = I('post.username');
+            $password = I('post.password');
+            $model = D('Admin');
+            if($model->login($username,$password)){
+                $this->success('登录成功',U('Index/index'));
+            } else{
+                $this->error($model->getError());
+            }
+        }else{
+            $this->display();
+        }
+    }
 
 }

@@ -86,3 +86,13 @@ function get_data_column(array $data,$field){
 function my_mcrypt($pwd,$salt){
     return md5(md5($pwd).$salt);
 }
+
+if(!function_exists('array_column')){
+    function array_column($data,$column){
+        $return = array();
+        foreach ($data as $item){
+            $return[] = $item[$column];
+        }
+        return $return;
+    }
+}
