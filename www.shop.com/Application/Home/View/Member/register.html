@@ -8,6 +8,9 @@
         <link rel="stylesheet" href="__CSS__/header.css" type="text/css"/>
         <link rel="stylesheet" href="__CSS__/login.css" type="text/css"/>
         <link rel="stylesheet" href="__CSS__/footer.css" type="text/css"/>
+        <style type='text/css'>
+            .error {color:red;}
+        </style>
     </head>
     <body>
         <!-- 顶部导航 start -->
@@ -53,32 +56,36 @@
                             <li>
                                 <label for="">用户名：</label>
                                 <input type="text" class="txt" name="username" />
+                                <span class='error'></span>
                                 <p>3-20位字符，可由中文、字母、数字和下划线组成</p>
                             </li>
                             <li>
                                 <label for="">密码：</label>
-                                <input type="password" class="txt" name="password" />
+                                <input type="password" class="txt" name="password" id='password' />
+                                <span class='error'></span>
                                 <p>6-20位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
                             </li>
                             <li>
                                 <label for="">确认密码：</label>
-                                <input type="password" class="txt" name="password" />
+                                <input type="password" class="txt" name="confirm_password" />
+                                <span class='error'></span>
                                 <p> <span>请再次输入密码</p>
                             </li>
                             <li>
                                 <label for="">邮箱：</label>
                                 <input type="text" class="txt" name="email" />
+                                <span class='error'></span>
                                 <p> <span>请输入邮箱</p>
                             </li>
                             <li class="checkcode">
                                 <label for="">验证码：</label>
                                 <input type="text"  name="checkcode" />
-                                <img src="__IMG__/checkcode1.jpg" alt="" />
-                                <span>看不清？<a href="">换一张</a></span>
+                                <img src="{:U('Captcha/captcha',array('t'=>time()))}" style='width:146px' title="看不清，点击切换" onclick='changeCaptcha(this)'/>
                             </li>
                             <li>
                                 <label for="">&nbsp;</label>
-                                <input type="checkbox" class="chb" checked="checked" /> 我已阅读并同意《用户注册协议》
+                                <input type="checkbox" name='agree' class="chb" checked="checked" /> 我已阅读并同意《用户注册协议》
+                                <span class='error'></span>
                             </li>
                             <li>
                                 <label for="">&nbsp;</label>
@@ -132,53 +139,65 @@
         <script type='text/javascript'>
             // validate signup form on keyup and submit
             $("#signupForm").validate({
+                errorPlacement: function(error, ele) {
+                    //在当前节点后添加上一个错误信息
+                    var error_ele = $(ele).next('span')[0];
+                    var error_msg = error[0].innerText;
+                    $(error_ele).text(error_msg);
+                },
+                success: function(error, ele) {
+                    var error_ele = $(ele).next('span')[0];
+                    $(error_ele).text('');
+                },
                 rules: {
-                    firstname: "required",
-                    lastname: "required",
                     username: {
                         required: true,
-                        minlength: 2
+                        rangelength: [3, 20],
+                        remote: '{:U("checkByField")}',
                     },
                     password: {
                         required: true,
-                        minlength: 5
+                        rangelength: [6, 20],
                     },
                     confirm_password: {
                         required: true,
-                        minlength: 5,
+                        rangelength: [6, 20],
                         equalTo: "#password"
                     },
                     email: {
                         required: true,
-                        email: true
-                    },
-                    topic: {
-                        required: "#newsletter:checked",
-                        minlength: 2
+                        email: true,
+                        remote: '{:U("checkByField")}',
                     },
                     agree: "required"
                 },
                 messages: {
-                    firstname: "Please enter your firstname",
-                    lastname: "Please enter your lastname",
                     username: {
-                        required: "Please enter a username",
-                        minlength: "Your username must consist of at least 2 characters"
+                        required: "用户名不能为空",
+                        rangelength: "用户名长度应当是3-20位",
+                        remote: "用户已经存在"
                     },
                     password: {
-                        required: "Please provide a password",
-                        minlength: "Your password must be at least 5 characters long"
+                        required: "密码不能为空",
+                        rangelength: "密码长度应当是6-20位"
                     },
                     confirm_password: {
-                        required: "Please provide a password",
-                        minlength: "Your password must be at least 5 characters long",
-                        equalTo: "Please enter the same password as above"
+                        required: "请输入确认密码",
+                        rangelength: "密码长度应当是6-20位",
+                        equalTo: "两次密码不一致"
                     },
-                    email: "Please enter a valid email address",
-                    agree: "Please accept our policy",
-                    topic: "Please select at least 2 topics"
+                    email: {
+                        required: "请输入邮箱",
+                        email: "密码不合法",
+                        remote: "邮箱已经注册"
+                    },
+                    agree: "必须同意《用户注册协议》",
                 }
             });
+
+            function changeCaptcha(ele) {
+                ele.src = "{:U('Captcha/captcha')}" + '?t=' + Math.random();
+            }
         </script>
     </body>
 </html>

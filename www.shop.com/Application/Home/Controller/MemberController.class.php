@@ -22,12 +22,33 @@ class MemberController extends \Think\Controller{
             if($model->create()){
                 if($model->createMember()!==false){
                     $this->success('注册成功');
+                } else{
+                    $this->error(get_errors($model->getError()));
                 }
             }else{
                 $this->error(get_errors($model->getError()));
             }
         }else{
             $this->display();
+        }
+    }
+    
+    public function checkByField(){
+        $username = I('get.username');
+        $email = I('get.email');
+        $model = D('Member');
+        if($username){
+            if($model->getByUsername($username)){
+                echo 'false';
+            }else{
+                echo 'true';
+            }
+        } elseif($email){
+            if($model->getByEmail($email)){
+                echo 'false';
+            }else{
+                echo 'true';
+            }
         }
     }
 }

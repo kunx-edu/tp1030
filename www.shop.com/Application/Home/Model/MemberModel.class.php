@@ -31,7 +31,14 @@ class MemberModel extends \Think\Model {
     );
     
     public function createMember(){
-        $this->data['password'] = my_mcrypt($this->data['password'],$this->data['salt']);
-        return $this->add();
+        $captcha = new \Think\Verify();
+        $code = I('post.checkcode');
+        if($captcha->check($code)) {
+            $this->data['password'] = my_mcrypt($this->data['password'],$this->data['salt']);
+            return $this->add();
+        } else{
+            $this->error = '验证码不正确';
+            return false;
+        }
     }
 }
