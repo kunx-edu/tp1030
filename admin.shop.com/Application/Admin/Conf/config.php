@@ -35,4 +35,5 @@ return array(
         'Admin/Index/menu',
         'Admin/Index/main',
     ),
+    'COOKIE_PREFIX'=>'xianrentiao_',
 );

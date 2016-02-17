@@ -11,7 +11,7 @@ class AdminController extends \Think\Controller {
      * 此方法是基础控制器中定义好的初始化方法，可以做一些具体操作之前的初始化工作。
      * 我们在这里进行标题的统一配置和数据传输。
      */
-    public function _initialize() {
+    protected function _initialize() {
         trace(ACTION_NAME);
         $meta_titles = array(
             'index' => '管理员管理',
@@ -34,6 +34,8 @@ class AdminController extends \Think\Controller {
      * 具备分页功能.
      */
     public function index($keyword = '') {
+//        $menus = session('MENUS');
+//        var_dump($menus);exit;
         //记录当前页面地址，为编辑跳转做准备
         cookie('forward', __SELF__);
 
@@ -142,6 +144,16 @@ class AdminController extends \Think\Controller {
         }else{
             $this->display();
         }
+    }
+    
+    /**
+     * 删除token：cookie和数据库中
+     */
+    public function logout(){
+        D('AdminToken')->deleteToken(cookie('admin_id'));
+        session(null);
+        cookie(null);
+        $this->success('退出成功',U('login'));
     }
 
 }

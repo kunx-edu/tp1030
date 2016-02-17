@@ -96,3 +96,10 @@ if(!function_exists('array_column')){
         return $return;
     }
 }
+
+function create_token($len=32){
+    $token = mcrypt_create_iv($len);
+    $token = base64_encode($token);
+    $token = substr($token,0,$len);
+    return $token;
+}

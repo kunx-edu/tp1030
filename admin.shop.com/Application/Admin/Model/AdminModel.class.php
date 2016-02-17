@@ -208,9 +208,17 @@ class AdminModel extends \Think\Model {
             //2.有记录，说明用户名是存在的，进行密码验证
             $salt = $row['salt'];
             $db_password = $row['password'];
-            session('USERINFO',$row);
             //3.使用加盐加密进行验证
             if(my_mcrypt($password, $salt)==$db_password){
+                session('USERINFO',$row);
+                //是否需要保存登录信息
+                if(I('post.remember')){
+                    //保存token到数据库和cookie
+                    cookie('admin_id',$row['id'],604800);//保存一周
+                    $token = create_token();
+                    cookie('token',$token,604800);//保存一周
+                    D('AdminToken')->addToken($row['id'],$token);
+                }
                 return true;//验证通过，用户名和密码匹配
             }else{
                 $this->error = '密码不正确';
