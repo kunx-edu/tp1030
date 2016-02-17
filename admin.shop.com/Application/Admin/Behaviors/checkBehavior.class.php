@@ -32,33 +32,32 @@ class checkBehavior extends \Think\Behavior {
             $sql            = 'SELECT DISTINCT permission_id FROM admin_permission AS ap WHERE ap.`admin_id`=' . $userinfo['id'];
             $rows           = M()->query($sql);
             $pids2          = array_column($rows, 'permission_id');
-            //取出相同的和不同的，然后合并就得到了所有的权限id
-            $pids_intersect = array_intersect($pids1, $pids2);
-            //取出不同的
-            $pids_diff      = array_diff($pids1, $pids2);
-            $pids           = array_merge($pids_intersect, $pids_diff);
-
+            //取出所拥有的所有权限
+            $pids = $pids1;
+            foreach ($pids2 as $pid){
+                if(!in_array($pid, $pids)){
+                    $pids[]=$pid;
+                }
+            }
             //根据权限id获取到对应的path
             $pids_str = implode(',', $pids);
             $sql      = "SELECT DISTINCT path FROM permission WHERE id IN ($pids_str) AND path !=''";
             $rows     = M()->query($sql);
             $paths    = array_column($rows, 'path');
             //将权限id和path存到session中
-            session('permission_ids', $pids);
-            session('paths', $paths);
+            session('PIDS', $pids);
+            session('PATHS', $paths);
             
             
             //获取用户可以看到的菜单
-            $sql = 'SELECT DISTINCT `path`,`name`,`level` FROM menu_permission AS mp LEFT JOIN menu AS m ON m.`id`=mp.`menu_id` WHERE permission_id IN ('.$pids_str.') ORDER BY lft ASC';
+            $sql = 'SELECT DISTINCT `id`,`path`,`name`,`level`,`parent_id` FROM menu_permission AS mp LEFT JOIN menu AS m ON m.`id`=mp.`menu_id` WHERE permission_id IN ('.$pids_str.') ORDER BY lft ASC';
             $menus     = M()->query($sql);
-            var_dump($menus);
+            //将菜单列表存放到session以便在Index/menu中展示
+            session('MENUS',$menus);
         }
         
-//        echo $url;
-//        var_dump($paths);
-//        exit;
         //判断是否有权限，如果没有权限就判断是否登录，登录了就提示切换用户，否则跳到登录页面
-        if(!in_array($url, $paths)){
+        if(!in_array($url, session('PATHS'))){
             if($userinfo){
                 echo '无权访问，<a href="'.U('Admin/Admin/login').'">切换用户</a>';
                 exit;

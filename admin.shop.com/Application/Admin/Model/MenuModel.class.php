@@ -102,7 +102,7 @@ class MenuModel extends \Think\Model{
      */
     public function getList($field='*',array $where = array(), $is_ajax=false) {
         $where['status'] = array('gt', 0);
-        $rows = $this->field($field)->where($where)->select();
+        $rows = $this->field($field)->where($where)->order('lft')->select();
         if ($is_ajax) {
             return json_encode($rows);
         } else {

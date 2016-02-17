@@ -68,7 +68,9 @@ class PermissionModel extends \Think\Model {
             $nested_sets = new \Admin\Service\NestedSets($db, 'permission', 'lft', 'rght', 'parent_id', 'id', 'level');
             $nested_sets->moveUnder($this->data['id'], $data['parent_id'], 'bottom');
         }
-        $data['name'] .= '_del';
+        if(isset($data['status'])&&$data['status']==0){
+            $data['name'] .= '_del';
+        }
         $this->save($data); //保存用户提交的数据，由于用户没有提交节点和层级，所以不会导致数据被破坏
     }
 

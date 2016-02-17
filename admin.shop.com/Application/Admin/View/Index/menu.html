@@ -123,72 +123,20 @@ body {
 <div id="main-div">
     <div id="menu-list">
         <ul id="menu-ul">
-            <li class="explode" key="02_cat_and_goods" name="menu">
-            商品管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Goods/index')}" target="main-frame">商品列表</a></li>
-                    <li class="menu-item"><a href="{:U('Goods/add')}" target="main-frame">添加新商品</a></li>
-                    <li class="menu-item"><a href="{:U('GoodsCategory/index')}" target="main-frame">商品分类</a></li>
-                    <li class="menu-item"><a href="goodsTrash.html" target="main-frame">商品回收站</a></li>
-                </ul>
-            </li>
-            
-            <li class="explode" key="02_cat_and_goods" name="menu">
-            品牌管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Brand/index')}" target="main-frame">品牌列表</a></li>
-                    <li class="menu-item"><a href="{:U('Brand/add')}" target="main-frame">添加新品牌</a></li>
-                </ul>
-            </li>
-            
-            <li class="explode" key="02_cat_and_goods" name="menu">
-            供应商管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Supplier/index')}" target="main-frame">供应商列表</a></li>
-                    <li class="menu-item"><a href="{:U('Supplier/add')}" target="main-frame">添加新供应商</a></li>
-                </ul>
-            </li>
-
-            <li class="explode" key="08_members" name="menu">
-            文章管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Article/index')}" target="main-frame">文章列表</a></li>
-                    <li class="menu-item"><a href="{:U('Article/add')}" target="main-frame">添加文章</a></li>
-                    <li class="menu-item"><a href="{:U('ArticleCategory/index')}" target="main-frame">文章分类</a></li>
-                    <li class="menu-item"><a href="{:U('ArticleCategory/add')}" target="main-frame">新建分类</a></li>
-                </ul>
-            </li>
-            <li class="explode" key="04_order" name="menu">
-            订单管理
-                <ul>
-                    <li class="menu-item"><a href="orderList.html" target="main-frame">订单列表</a></li>
-                    <li class="menu-item"><a href="orderQuery.html" target="main-frame">订单查询</a></li>
-                    <li class="menu-item"><a href="orderAdd.html" target="main-frame">添加订单</a></li>
-                    <li class="menu-item"><a href="delivery_list.html" target="main-frame">发货单列表</a></li>
-                    <li class="menu-item"><a href="back_list.html" target="main-frame">退货单列表</a></li>
-                </ul>
-            </li>
-            <li class="explode" key="08_members" name="menu">
-            会员管理
-                <ul>
-                    <li class="menu-item"><a href="userList.html" target="main-frame">会员列表</a></li>
-                    <li class="menu-item"><a href="userAdd.html" target="main-frame">添加会员</a></li>
-                    <li class="menu-item"><a href="userMessage.html" target="main-frame">会员留言</a></li>
-                </ul>
-            </li>
-            <li class="explode" key="08_members" name="menu">
-            权限管理
-                <ul>
-                    <li class="menu-item"><a href="{:U('Role/index')}" target="main-frame">角色列表</a></li>
-                    <li class="menu-item"><a href="{:U('Role/add')}" target="main-frame">添加角色</a></li>
-                    <li class="menu-item"><a href="{:U('Permission/index')}" target="main-frame">权限列表</a></li>
-                    <li class="menu-item"><a href="{:U('Permission/add')}" target="main-frame">添加权限</a></li>
-                    <li class="menu-item"><a href="{:U('Admin/index')}" target="main-frame">管理员列表</a></li>
-                    <li class="menu-item"><a href="{:U('Admin/add')}" target="main-frame">添加管理员</a></li>
-                    <li class="menu-item"><a href="{:U('Menu/index')}" target="main-frame">菜单列表</a></li>
-                    <li class="menu-item"><a href="{:U('Menu/add')}" target="main-frame">添加菜单</a></li>
-                </ul>
-            </li>
+            <foreach name="Think.session.MENUS" item="item">
+                <eq name="item.level" value="1">
+                <li class="explode" key="02_cat_and_goods" name="menu">
+                {$item.name}
+                    <ul>
+                        <foreach name="Think.session.MENUS" item="sub_menu">
+                            <eq name="sub_menu.parent_id" value="$item.id">
+                                <li class="menu-item"><a href="{:U($sub_menu['path'])}" target="main-frame">{$sub_menu.name}</a></li>
+                            </eq>
+                        </foreach>
+                    </ul>
+                </li>
+                </eq>
+            </foreach>
         </ul>
     </div>
     <div id="help-div" style="display:none">
