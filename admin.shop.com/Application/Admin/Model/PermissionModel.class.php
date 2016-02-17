@@ -11,7 +11,7 @@ class PermissionModel extends \Think\Model {
     protected $patchValidate = true; //开启批量验证
     protected $_validate     = array(
         array('name', 'require', '名称不能为空'),
-        array('path', 'require', 'URL不能为空'),
+//        array('path', 'require', 'URL不能为空'),
         array('parent_id', 'require', '父权限不能为空'),
         array('status', 'require', '状态不能为空'),
         array('sort', 'require', '排序不能为空')
