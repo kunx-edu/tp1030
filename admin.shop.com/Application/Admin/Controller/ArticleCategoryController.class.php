@@ -25,7 +25,7 @@ class ArticleCategoryController extends \Think\Controller {
      * 文章分类列表.
      * 具备分页功能.
      */
-    public function index($keyword = '') {
+    public function index() {
         //记录当前页面地址，为编辑跳转做准备
         cookie('forward',__SELF__);
         
@@ -33,15 +33,8 @@ class ArticleCategoryController extends \Think\Controller {
         $model           = D('ArticleCategory');
         //2.获取数据
         $where['status'] = array('egt', 0);
-        if ($keyword) {
-            $where['name'] = array('like', $keyword . '%');
-        }
-        //5.获取满足条件的总行数
-        $count = $model->where($where)->count();
-        //5.2获取分页html代码
-        $size = C('PAGE_SIZE')?C('PAGE_SIZE'):10;
         
-        $rows = $model->where($where)->page(I('get.p',1),$size)->select();
+        $rows = $model->where($where)->select();
         //3.展示数据
         $this->assign('rows', $rows);
         $this->display();
