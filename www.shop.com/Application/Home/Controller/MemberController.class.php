@@ -32,7 +32,9 @@ class MemberController extends \Think\Controller{
             $this->display();
         }
     }
-    
+    /**
+     * 验证用户名和邮箱是否已经被占用
+     */
     public function checkByField(){
         $username = I('get.username');
         $email = I('get.email');
@@ -50,5 +52,19 @@ class MemberController extends \Think\Controller{
                 echo 'true';
             }
         }
+    }
+    
+    
+    public function activation($username,$rand){
+        $data = array('username'=>$username,'rand'=>$rand);
+        if(M('MemberActivation')->where($data)->find()){
+            //执行账户激活
+            D('Member')->activationMember($username);
+            //删除激活记录
+            M('MemberActivation')->where($data)->delete();
+            $this->success('激活成功，跳转到首页',U('Index/index'));
+        }
+        //提示错误
+        $this->error('激活码可能已经失效');
     }
 }

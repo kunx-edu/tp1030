@@ -103,3 +103,33 @@ function create_token($len=32){
     $token = substr($token,0,$len);
     return $token;
 }
+
+
+function send_mail($address,$subject,$content) {
+        Vendor('PHPMailer.PHPMailerAutoload');
+        $mail = new \PHPMailer;
+
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host       = 'smtp.126.com';  // Specify main and backup SMTP servers
+        $mail->SMTPAuth   = true;                               // Enable SMTP authentication
+        $mail->Username   = 'kunx_edu@126.com';                 // SMTP username
+        $mail->Password   = 'iam4ge';                           // SMTP password
+
+        $mail->setFrom('kunx_edu@126.com', 'sige');
+        $mail->addAddress($address);     // Add a recipient
+
+        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->CharSet = 'UTF-8';                                  // 邮件内容编码
+
+        $mail->Subject = $subject;
+        $mail->Body    = $content;
+
+        return $mail->send();
+//        
+//        if (!$mail->send()) {
+//            echo '邮件发送失败.';
+//            echo '错误信息: ' . $mail->ErrorInfo;
+//        } else {
+//            echo '邮件发送成功';
+//        }
+    }
