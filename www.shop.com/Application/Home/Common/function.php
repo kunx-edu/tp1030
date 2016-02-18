@@ -110,12 +110,13 @@ function send_mail($address,$subject,$content) {
         $mail = new \PHPMailer;
 
         $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host       = 'smtp.126.com';  // Specify main and backup SMTP servers
+        $email_config = C('EMAIL_CONF');
+        $mail->Host       = $email_config['host'];  // Specify main and backup SMTP servers
         $mail->SMTPAuth   = true;                               // Enable SMTP authentication
-        $mail->Username   = 'kunx_edu@126.com';                 // SMTP username
-        $mail->Password   = 'iam4ge';                           // SMTP password
+        $mail->Username   = $email_config['username'];                 // SMTP username
+        $mail->Password   = $email_config['password'];                           // SMTP password
 
-        $mail->setFrom('kunx_edu@126.com', 'sige');
+        $mail->setFrom($email_config['username'], $email_config['author']);
         $mail->addAddress($address);     // Add a recipient
 
         $mail->isHTML(true);                                  // Set email format to HTML

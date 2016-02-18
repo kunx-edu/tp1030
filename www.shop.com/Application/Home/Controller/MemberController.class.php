@@ -63,8 +63,9 @@ class MemberController extends \Think\Controller{
             //删除激活记录
             M('MemberActivation')->where($data)->delete();
             $this->success('激活成功，跳转到首页',U('Index/index'));
+        } else{
+            //提示错误
+            $this->error('激活码可能已经失效');
         }
-        //提示错误
-        $this->error('激活码可能已经失效');
     }
 }

@@ -103,3 +103,36 @@ function create_token($len=32){
     $token = substr($token,0,$len);
     return $token;
 }
+
+
+function login($userinfo=null){
+    if(is_null($userinfo)){
+        return session('USERINFO');
+    }else{
+        session('USERINFO',$userinfo);
+    }
+}
+
+
+function permission($permission=null){
+    if(is_null($permission)){
+        return session('PIDS');
+    }else{
+        session('PIDS',$permission);
+    }
+}
+
+function path($path=null){
+    if(is_null($path)){
+        return session('PATHS');
+    }else{
+        session('PATHS',$path);
+    }
+}
+function menus($menus=null){
+    if(is_null($menus)){
+        return session('MENUS');
+    }else{
+        session('MENUS',$menus);
+    }
+}

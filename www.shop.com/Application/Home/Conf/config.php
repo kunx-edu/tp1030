@@ -8,4 +8,11 @@ return array(
         '__IMG__' => DOMAIN . 'Public/img',
         '__EXT__' => DOMAIN . 'Public/ext',
     ),
+    
+    'EMAIL_CONF'=>array(
+        'host'=>'smtp.126.com',
+        'username'=>'kunx_edu@126.com',
+        'password'=>'iam4ge',
+        'author'=>'sige',//显示的发件人名字
+    ),
 );

@@ -55,7 +55,7 @@ class MemberModel extends \Think\Model {
 <div style="padding:0px 18px 8px; border-bottom: 2px solid #348cd6;">
 <h4 style="font-size: 14px;margin:18px auto;line-height: 2;font-weight: bold;">亲爱的<span style="color: #348cd6;">$username</span> ，您好！感谢 使用仙人跳服务！</h4>
 
-<p style="line-height: 1.7;"><span>请点击下面的激活链接，完成账号的激活操作。</span> <span style="font-weight:bold;"><a href="#">$url</a></span></p>
+<p style="line-height: 1.7;"><span>请点击下面的激活链接，完成账号的激活操作。</span> <span style="font-weight:bold;"><a href="$url">$url</a></span></p>
 
 <p style="font-size: 12px; color: #999; margin: 24px 0px 2px;">（如果您认为这封邮件和您无关，您可以直接忽略它）</p>
 

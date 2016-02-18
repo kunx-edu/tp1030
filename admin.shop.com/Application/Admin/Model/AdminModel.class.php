@@ -210,7 +210,8 @@ class AdminModel extends \Think\Model {
             $db_password = $row['password'];
             //3.使用加盐加密进行验证
             if(my_mcrypt($password, $salt)==$db_password){
-                session('USERINFO',$row);
+//                session('USERINFO',$row);
+                login($row);
                 //是否需要保存登录信息
                 if(I('post.remember')){
                     //保存token到数据库和cookie
@@ -219,6 +220,7 @@ class AdminModel extends \Think\Model {
                     cookie('token',$token,604800);//保存一周
                     D('AdminToken')->addToken($row['id'],$token);
                 }
+                $this->savePermission();
                 return true;//验证通过，用户名和密码匹配
             }else{
                 $this->error = '密码不正确';
@@ -228,5 +230,42 @@ class AdminModel extends \Think\Model {
             $this->error = '用户名不存在';
             return false;
         }
+    }
+    
+    /**
+     * 保存用户的权限、可以访问的路径、可见菜单到session中
+     */
+    private function savePermission(){
+            //获取用户角色对应的权限
+            $sql            = 'SELECT DISTINCT `permission_id` FROM admin_role AS ar LEFT JOIN role_permission AS rp ON ar.`role_id`=rp.`role_id` WHERE ar.`admin_id`=' . $userinfo['id'];
+            $rows           = M()->query($sql);
+            $pids1          = array_column($rows, 'permission_id');
+            $sql            = 'SELECT DISTINCT permission_id FROM admin_permission AS ap WHERE ap.`admin_id`=' . $userinfo['id'];
+            $rows           = M()->query($sql);
+            $pids2          = array_column($rows, 'permission_id');
+            //取出所拥有的所有权限
+            $pids = $pids1;
+            foreach ($pids2 as $pid){
+                if(!in_array($pid, $pids)){
+                    $pids[]=$pid;
+                }
+            }
+            //根据权限id获取到对应的path
+            $pids_str = implode(',', $pids);
+            $sql      = "SELECT DISTINCT path FROM permission WHERE id IN ($pids_str) AND path !=''";
+            $rows     = M()->query($sql);
+            $paths    = array_column($rows, 'path');
+            //将权限id和path存到session中
+//            session('PIDS', $pids);
+//            session('PATHS', $paths);
+            permission($pids);
+            path($paths);
+            
+            //获取用户可以看到的菜单
+            $sql = 'SELECT DISTINCT `id`,`path`,`name`,`level`,`parent_id` FROM menu_permission AS mp LEFT JOIN menu AS m ON m.`id`=mp.`menu_id` WHERE permission_id IN ('.$pids_str.') ORDER BY lft ASC';
+            $menus     = M()->query($sql);
+            //将菜单列表存放到session以便在Index/menu中展示
+//            session('MENUS',$menus);
+            menus($menus);
     }
 }
