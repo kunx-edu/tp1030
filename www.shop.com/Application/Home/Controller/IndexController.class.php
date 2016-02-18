@@ -47,15 +47,39 @@ class IndexController extends Controller {
          *  [第二篇文章],
          * ]
          */
+        
     }
     
     public function index(){
+        $model = D('Goods');
+        $best_goods = $model->getGoodsByStatus(1);
+        $new_goods = $model->getGoodsByStatus(2);
+        $hot_goods = $model->getGoodsByStatus(4);
+        $this->assign('best_goods', $best_goods);
+        $this->assign('new_goods', $new_goods);
+        $this->assign('hot_goods', $hot_goods);
        
 //        var_dump($all_categories);
         $this->display();
     }
     
     public function test(){
+        $this->display();
+    }
+    
+    /**
+     * 展示商品详情。
+     * @param type $goods_id
+     */
+    public function goods($goods_id){
+        $model = D('Goods');
+        $goods = $model->getGoodsDetail($goods_id);
+        $this->assign('goods', $goods);
+        //取出商品对应的图片
+//        $gallery = D('GoodsGallery')->field('path')->where(array('goods_id'=>$goods_id))->select();
+//        $gallery = array_column($gallery, 'path');
+//        $this->assign('gallery', $gallery);
+//        var_dump($gallery);
         $this->display();
     }
 }

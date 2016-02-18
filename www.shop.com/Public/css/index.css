@@ -52,7 +52,7 @@
 .guide{height: 271px;}
 .guide_content{width: 890px; height: 271px;}
 .guide_content h2{height: 38px; line-height: 38px; border-top: 2px solid #d00000; border-left: 1px solid #ddd; }
-.guide_content h2 span{float: left; display: inline; width:177px; cursor: pointer; border:1px solid #ddd; border-top: 0; border-left: 0; background: url("/Public/img/bg1.png") 0 -73px repeat-x;   text-align: center; font:bold 14px/38px "microsoft yahei";}
+.guide_content h2 span{float: left; display: inline; width:295px; cursor: pointer; border:1px solid #ddd; border-top: 0; border-left: 0; background: url("/Public/img/bg1.png") 0 -73px repeat-x;   text-align: center; font:bold 14px/38px "microsoft yahei";}
 .guide_content h2 span.last{width: 176px;}
 .guide_content h2 span.on{background: none; border-bottom: 0; color:#c30;}
 

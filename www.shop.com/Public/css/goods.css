@@ -22,8 +22,8 @@
 .smallpic li{float:left; display: inline; width: 62px; height: 54px;}
 .smallpic li img{border:1px solid #CECFCE; padding: 1px; width: 50px; height: 50px;}
 .smallpic .zoomThumbActive img{border:2px solid #e4393c; padding: 0;}
-#backward{display: block; position: absolute; left: 0; top: 0; width: 17px; height: 54px; background: url("../images/newicon.png") -68px -139px no-repeat; margin-right: 8px; cursor: default;}
-#forward{display: block; width: 17px; height: 54px; position: absolute; top: 0; right: 0; background: url("../images/newicon.png") -51px -139px no-repeat; cursor: pointer;}
+#backward{display: block; position: absolute; left: 0; top: 0; width: 17px; height: 54px; background: url("/Public/img/newicon.png") -68px -139px no-repeat; margin-right: 8px; cursor: default;}
+#forward{display: block; width: 17px; height: 54px; position: absolute; top: 0; right: 0; background: url("/Public/img/newicon.png") -51px -139px no-repeat; cursor: pointer;}
 #backward.on{background-position: -34px -139px; cursor: pointer;}
 #backward.off{background-position: -68px -139px; cursor: default;}
 #forward.on{background-position: -51px -139px; cursor: pointer;}
@@ -36,7 +36,7 @@
 .goodsinfo li.market_price em{text-decoration: line-through;}
 .goodsinfo li.shop_price strong{color: #c30; font-weight: bold; font-size: 14px;}
 .goodsinfo li a{color: #005aa0;}
-.goodsinfo li.star strong{display: inline-block; width:75px; height: 14px; margin: 1px 5px 0 0; background: url("../images/newicon.png") -109px -239px no-repeat;}
+.goodsinfo li.star strong{display: inline-block; width:75px; height: 14px; margin: 1px 5px 0 0; background: url("/Public/img/newicon.png") -109px -239px no-repeat;}
 .goodsinfo li.star4 strong{background-position: -124px -239px;}
 .goodsinfo li.star3 strong{background-position: -139px -239px;}
 .goodsinfo li.star2 strong{background-position: -154px -239px;}
@@ -49,20 +49,20 @@
 .choose dd a{float: left; display: inline; padding: 1px 11px; background: #fff; border: 1px solid #ccc; text-align: center; color: #666; margin:0 5px 0 0; }
 
 .choose dd a:hover{text-decoration: none; border: 2px solid #e4393c; color:#E4393C; padding: 0px 10px;}
-.choose dd a.selected{border: 2px solid #e4393c; background: url("../images/arrow.gif") right bottom no-repeat; padding: 0 10px;}
+.choose dd a.selected{border: 2px solid #e4393c; background: url("/Public/img/arrow.gif") right bottom no-repeat; padding: 0 10px;}
 .choose input{display: none;}
 .choose .amount{float:left; display: inline; width: 30px; height: 16px; padding: 2px; border: 1px solid #ccc; text-align: center; margin: 0 5px; }
 
-#reduce_num{float: left; display: inline; width: 15px; height: 15px; border: 0; padding: 0; margin:0; background: url("../images/newicon.png") -216px -190px;position: relative; top:4px; }
-#add_num{float: left; display: inline; width: 15px; height: 15px; border: 0; padding: 0; margin:0;  background: url("../images/newicon.png") -232px -190px;position: relative; top:4px; }
+#reduce_num{float: left; display: inline; width: 15px; height: 15px; border: 0; padding: 0; margin:0; background: url("/Public/img/newicon.png") -216px -190px;position: relative; top:4px; }
+#add_num{float: left; display: inline; width: 15px; height: 15px; border: 0; padding: 0; margin:0;  background: url("/Public/img/newicon.png") -232px -190px;position: relative; top:4px; }
 #reduce_num:hover{background-position: -216px -206px;}
 #add_num:hover{background-position: -232px -206px;}
-.choose input.add_btn{display: block; border: none; width: 137px; height: 38px; background: url("../images/p-btns.png") 0 0 no-repeat; cursor: pointer;}
-.choose .add_btn:hover{background: url("../images/p-btns.png") -157px 0 no-repeat ;}
+.choose input.add_btn{display: block; border: none; width: 137px; height: 38px; background: url("/Public/img/p-btns.png") 0 0 no-repeat; cursor: pointer;}
+.choose .add_btn:hover{background: url("/Public/img/p-btns.png") -157px 0 no-repeat ;}
 
 /*商品详情*/
 .detail{width: 989px; overflow: hidden;}
-.detail_hd{width: 988px; height: 31px;  border-right:1px solid #ccc; background:url("../images/newicon.png") 0 -286px repeat-x;}
+.detail_hd{width: 988px; height: 31px;  border-right:1px solid #ccc; background:url("/Public/img/newicon.png") 0 -286px repeat-x;}
 .detail_hd li{float: left; display: inline; height: 23px; padding: 6px 10px 0; font-size: 14px; font-weight: bolder; color: #666; border-right: 1px solid #ddd; cursor:pointer;}
 .detail_hd li.first{border-left:1px solid #ccc; }
 .detail_hd li.on{border:2px solid #BD0000; border-bottom: 0; background: #fff; color: #BD0000;}
@@ -96,14 +96,14 @@
 
 .comment_items{width: 869px; padding: 0 0 0 120px; position: relative;}
 .comment_items .user_pic{width: 120px; position: absolute;left: 0; top:10px; text-align: center;}
-.comment_items .user_pic img{width: 50px; height: 50px; background: url("../images/bg_xiala.png") 0 0 no-repeat; padding: 8px;}
+.comment_items .user_pic img{width: 50px; height: 50px; background: url("/Public/img/bg_xiala.png") 0 0 no-repeat; padding: 8px;}
 .comment_items .user_pic a{ color: #005aa0; }
 .item{padding: 10px 15px 5px; width: 837px; border: 1px solid #d0e4c2; background: #fcfffa; overflow: hidden;}
-.cornor{width: 14px; height: 26px; background: url("../images/newicon201301028.png") -259px -47px no-repeat; position: absolute; left: 108px; top: 10px;}
+.cornor{width: 14px; height: 26px; background: url("/Public/img/newicon201301028.png") -259px -47px no-repeat; position: absolute; left: 108px; top: 10px;}
 .item .title{ border-bottom: 1px solid #d0e4c2; height: 20px; line-height: 20px; margin-bottom: 10px;}
 .item .title span{float: right; color: #9C9A9C;}
 
-.item .star, .comment_form .star{display: inline-block; width:75px; height: 14px; margin: 1px 5px 0 0; background: url("../images/newicon.png") -109px -239px no-repeat;}
+.item .star, .comment_form .star{display: inline-block; width:75px; height: 14px; margin: 1px 5px 0 0; background: url("/Public/img/newicon.png") -109px -239px no-repeat;}
 .item .star4, .comment_form .star4{background-position: -124px -239px;}
 .item .star3, .comment_form .star3{background-position: -139px -239px;}
 .item .star2, .comment_form .star2{background-position: -154px -239px;}
