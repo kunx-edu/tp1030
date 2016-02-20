@@ -158,9 +158,10 @@ class Redis {
       +----------------------------------------------------------
      */
     public function write($sessID, $sessData) {
-        if (!$sessData || $sessData == $this->get_result) {
-            return true;
-        }
+        //这里可能会导致session(null)和session('name',null)失效 
+//        if (!$sessData || $sessData == $this->get_result) {
+//            return true;
+//        }
         $this->connect(1);
         $expire = $this->options['expire'];
         $sessID = $this->options['prefix'] . $sessID;

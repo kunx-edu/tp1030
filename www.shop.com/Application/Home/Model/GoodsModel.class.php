@@ -25,9 +25,23 @@ class GoodsModel extends \Think\Model{
             'status'=>1,
         );
         $goods_info =  $this->where($where)->find();
+//        if(!$goods_info){
+//            return false;
+//        }
         $gallery = D('GoodsGallery')->field('path')->where(array('goods_id'=>$goods_id))->select();
         $gallery = array_column($gallery, 'path');
+//        if(!$gallery){
+//            return false;
+//        }
         $goods_info['gallery'] = $gallery;
+        
+//        $intro = M('GoodsIntro')->field('content')->where(array('goods_id'=>$goods_id))->find();
+        $intro = M('GoodsIntro')->getFieldByGoodsId($goods_id,'content');;
+//        if(!$intro){
+//            return false;
+//        }
+        $goods_info['intro']=$intro;
+        
         return $goods_info;
     }
 }

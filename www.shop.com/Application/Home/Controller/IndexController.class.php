@@ -39,6 +39,8 @@ class IndexController extends Controller {
         }
         $this->assign('help_categories',$help_categories);
         $this->assign('help_articles',$help_articles);
+        
+        $this->assign('userinfo',is_login());
         //获取对应的文章
 //        var_dump($help_articles);
         /**
@@ -74,12 +76,16 @@ class IndexController extends Controller {
     public function goods($goods_id){
         $model = D('Goods');
         $goods = $model->getGoodsDetail($goods_id);
-        $this->assign('goods', $goods);
-        //取出商品对应的图片
-//        $gallery = D('GoodsGallery')->field('path')->where(array('goods_id'=>$goods_id))->select();
-//        $gallery = array_column($gallery, 'path');
-//        $this->assign('gallery', $gallery);
-//        var_dump($gallery);
-        $this->display();
+        if(!$goods){
+            $this->error('你看的商品已经离家出走了，请选择其它的吧',U('index'));
+        } else{
+            $this->assign('goods', $goods);
+            //取出商品对应的图片
+    //        $gallery = D('GoodsGallery')->field('path')->where(array('goods_id'=>$goods_id))->select();
+    //        $gallery = array_column($gallery, 'path');
+    //        $this->assign('gallery', $gallery);
+    //        var_dump($gallery);
+            $this->display();
+        }
     }
 }

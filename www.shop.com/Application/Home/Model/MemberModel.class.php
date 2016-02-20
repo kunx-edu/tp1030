@@ -99,4 +99,32 @@ mail;
     public function activationMember($username){
         return $this->where(array('username'=>$username))->setField('status',1);
     }
+    
+    
+    public function login(){
+        //验证验证码
+        $code = I('post.checkcode');
+        $username = I('post.username');
+        $password = I('post.password');
+        $captcha = new \Think\Verify();
+        if(!$captcha->check($code)){
+            $this->error = '验证码不正确';
+            return false;
+        }
+        //通过用户名获取用户的密码和盐
+        $userinfo = $this->getByUsername($username);
+        if(!$userinfo){
+            $this->error = '用户名不正确';
+            return false;
+        }
+        //验证加盐加密后的密码
+        if(my_mcrypt($password, $userinfo['salt']) !== $userinfo['password']){
+            $this->error = '密码不正确';
+            return false;
+        }
+        unset($userinfo['salt'],$userinfo['password']);
+        login($userinfo);
+        return true;
+        //成功返回true，失败返回false
+    }
 }

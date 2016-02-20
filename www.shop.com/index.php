@@ -25,6 +25,9 @@ define('RUNTIME_PATH', ROOT_PATH . '/Runtime/');
 // 定义应用目录
 define('APP_PATH', ROOT_PATH . '/Application/');
 
+//设定静态缓存的存放目录
+define('HTML_PATH',ROOT_PATH.'/Html/');
+
 // 引入ThinkPHP入口文件
 require dirname(ROOT_PATH) . '/ThinkPHP/ThinkPHP.php';
 

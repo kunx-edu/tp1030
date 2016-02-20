@@ -105,32 +105,58 @@ function create_token($len=32){
 }
 
 
-function send_mail($address,$subject,$content) {
-        Vendor('PHPMailer.PHPMailerAutoload');
-        $mail = new \PHPMailer;
-
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $email_config = C('EMAIL_CONF');
-        $mail->Host       = $email_config['host'];  // Specify main and backup SMTP servers
-        $mail->SMTPAuth   = true;                               // Enable SMTP authentication
-        $mail->Username   = $email_config['username'];                 // SMTP username
-        $mail->Password   = $email_config['password'];                           // SMTP password
-
-        $mail->setFrom($email_config['username'], $email_config['author']);
-        $mail->addAddress($address);     // Add a recipient
-
-        $mail->isHTML(true);                                  // Set email format to HTML
-        $mail->CharSet = 'UTF-8';                                  // 邮件内容编码
-
-        $mail->Subject = $subject;
-        $mail->Body    = $content;
-
-        return $mail->send();
-//        
-//        if (!$mail->send()) {
-//            echo '邮件发送失败.';
-//            echo '错误信息: ' . $mail->ErrorInfo;
-//        } else {
-//            echo '邮件发送成功';
-//        }
+function login($userinfo=null){
+    if(is_null($userinfo)){
+        return session('USERINFO');
+    }else{
+        session('USERINFO',$userinfo);
     }
+}
+
+/**
+ * 判断是否登录，如果登录返回用户信息，否则返回false
+ * @return boolean
+ */
+function is_login(){
+    if(session('USERINFO')){
+        return login();
+    }else{
+        return false;
+    }
+}
+
+
+function permission($permission=null){
+    if(is_null($permission)){
+        return session('PIDS');
+    }else{
+        session('PIDS',$permission);
+    }
+}
+
+function path($path=null){
+    if(is_null($path)){
+        return session('PATHS');
+    }else{
+        session('PATHS',$path);
+    }
+}
+function menus($menus=null){
+    if(is_null($menus)){
+        return session('MENUS');
+    }else{
+        session('MENUS',$menus);
+    }
+}
+
+function logout(){
+    session(null);
+    cookie(null);
+}
+
+
+function get_redis(){
+    $redis = new \Redis;
+    $redis->connect('127.0.0.1',6379);
+    return $redis;
+}

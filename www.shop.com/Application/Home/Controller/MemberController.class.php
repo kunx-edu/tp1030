@@ -15,57 +15,85 @@ namespace Home\Controller;
  * 会员退出
  * @author kunx
  */
-class MemberController extends \Think\Controller{
-    public function register(){
-        if(IS_POST){
+class MemberController extends \Think\Controller {
+
+    public function register() {
+        if (IS_POST) {
             $model = D('Member');
-            if($model->create()){
-                if($model->createMember()!==false){
+            if ($model->create()) {
+                if ($model->createMember() !== false) {
                     $this->success('注册成功');
-                } else{
+                } else {
                     $this->error(get_errors($model->getError()));
                 }
-            }else{
+            } else {
                 $this->error(get_errors($model->getError()));
             }
-        }else{
+        } else {
             $this->display();
         }
     }
+
     /**
      * 验证用户名和邮箱是否已经被占用
      */
-    public function checkByField(){
+    public function checkByField() {
         $username = I('get.username');
-        $email = I('get.email');
-        $model = D('Member');
-        if($username){
-            if($model->getByUsername($username)){
+        $email    = I('get.email');
+        $model    = D('Member');
+        if ($username) {
+            if ($model->getByUsername($username)) {
                 echo 'false';
-            }else{
+            } else {
                 echo 'true';
             }
-        } elseif($email){
-            if($model->getByEmail($email)){
+        } elseif ($email) {
+            if ($model->getByEmail($email)) {
                 echo 'false';
-            }else{
+            } else {
                 echo 'true';
             }
         }
     }
-    
-    
-    public function activation($username,$rand){
-        $data = array('username'=>$username,'rand'=>$rand);
-        if(M('MemberActivation')->where($data)->find()){
+
+    public function activation($username, $rand) {
+        $data = array('username' => $username, 'rand' => $rand);
+        if (M('MemberActivation')->where($data)->find()) {
             //执行账户激活
             D('Member')->activationMember($username);
             //删除激活记录
             M('MemberActivation')->where($data)->delete();
-            $this->success('激活成功，跳转到首页',U('Index/index'));
-        } else{
+            $this->success('激活成功，跳转到首页', U('Index/index'));
+        } else {
             //提示错误
             $this->error('激活码可能已经失效');
         }
     }
+
+    public function login() {
+        if (IS_POST) {
+            $model = D('Member');
+            $flag = $model->login();
+            if ($flag) {
+                $this->success('登录成功',U('Index/index'));
+                return;
+            }else{
+                $this->error(get_errors($model->getError()));
+            }
+        } else {
+            $this->display();
+        }
+    }
+    
+    
+    public function logout(){
+        logout();
+        $this->success('退出成功',U('Index/index'));
+    }
+    
+    public function getUserInfo(){
+        $this->ajaxReturn(is_login());
+//        echo json_encode(is_login());
+    }
+
 }
