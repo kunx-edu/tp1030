@@ -41,21 +41,24 @@ class ShoppingCarController extends \Think\Controller{
              *  2          4
              */
             //1.1.1取出原来的，判断是否存在相同商品，如果有，加数，如果没有加元素
-            $car = unserialize(cookie('SHOPPING_CAR'));
+            $car = cookie_shopping_car();
             if(isset($car[$goods_id])){
                 $car[$goods_id] += $amount;
-                cookie('SHOPPING_CAR',  serialize($car));
             }else {
                 $car[$goods_id] = $amount;
-                cookie('SHOPPING_CAR',  serialize($car));
             }
+            cookie_shopping_car($car);
             
         }
+        $this->redirect('flow1');
     }
     
     //购物车列表
     public function flow1(){
-        var_dump(I('post.'));
+        $model = D('ShoppingCar');
+        $car = $model->getCar();
+        $this->assign('car',$car);
+        $this->display();
         
     }
 }

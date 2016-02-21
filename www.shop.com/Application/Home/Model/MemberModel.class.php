@@ -124,6 +124,8 @@ mail;
         }
         unset($userinfo['salt'],$userinfo['password']);
         login($userinfo);
+        $shopping_car = D('ShoppingCar');
+        $shopping_car->moveCarToDb();
         return true;
         //成功返回true，失败返回false
     }

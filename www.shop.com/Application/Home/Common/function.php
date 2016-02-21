@@ -160,3 +160,16 @@ function get_redis(){
     $redis->connect('127.0.0.1',6379);
     return $redis;
 }
+
+/**
+ * 获取cookie中购物车数据或者设置购物车到cookie中
+ * @param type $car
+ * @return type
+ */
+function cookie_shopping_car($car=null){
+    if(!is_null($car)){
+        cookie('SHOPPING_CAR',  serialize($car));
+    }else{
+        return unserialize(cookie('SHOPPING_CAR'));
+    }
+}
