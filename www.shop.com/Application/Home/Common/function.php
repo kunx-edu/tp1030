@@ -28,7 +28,7 @@ function get_errors($errors) {
  * @return string $html 返回的select html代码
  */
 function arr2select(array $data, $value_field, $name_field, $name, $select_value = '') {
-    $html = '<select name="' . $name . '">';
+    $html = '<select name="' . $name . '" class="'.$name.'">';
     $html .= '<option vaule="-1">请选择...</option>';
     foreach ($data as $value) {
         if ($value[$value_field] == $select_value) {
@@ -172,4 +172,15 @@ function cookie_shopping_car($car=null){
     }else{
         return unserialize(cookie('SHOPPING_CAR'));
     }
+}
+
+/**
+ * 自定义数字显示格式
+ * @param string|number $number
+ * @param int $decimals 小数点后显示几位
+ * @param string $thousands_sep 千位分隔符
+ * @return type
+ */
+function my_number_format($number,$decimals=2,$thousands_sep=''){
+    return number_format($number,$decimals,'.',$thousands_sep);
 }

@@ -1,0 +1,215 @@
+<extend name='Layout:common'/>
+<block name='css'>
+    <css href='__CSS__/home.css' />
+    <css href='__CSS__/address.css' />
+</block>
+
+<block name='main'> 
+    <!-- 页面主体 start -->
+    <div class="main w1210 bc mt10">
+        <div class="crumb w1210">
+            <h2><strong>我的XX </strong><span>> 我的订单</span></h2>
+        </div>
+
+        <!-- 左侧导航菜单 start -->
+        <div class="menu fl">
+            <h3>我的XX</h3>
+            <div class="menu_wrap">
+                <dl>
+                    <dt>订单中心 <b></b></dt>
+                    <dd><b>.</b><a href="">我的订单</a></dd>
+                    <dd><b>.</b><a href="">我的关注</a></dd>
+                    <dd><b>.</b><a href="">浏览历史</a></dd>
+                    <dd><b>.</b><a href="">我的团购</a></dd>
+                </dl>
+
+                <dl>
+                    <dt>账户中心 <b></b></dt>
+                    <dd class="cur"><b>.</b><a href="">账户信息</a></dd>
+                    <dd><b>.</b><a href="">账户余额</a></dd>
+                    <dd><b>.</b><a href="">消费记录</a></dd>
+                    <dd><b>.</b><a href="">我的积分</a></dd>
+                    <dd><b>.</b><a href="">收货地址</a></dd>
+                </dl>
+
+                <dl>
+                    <dt>订单中心 <b></b></dt>
+                    <dd><b>.</b><a href="">返修/退换货</a></dd>
+                    <dd><b>.</b><a href="">取消订单记录</a></dd>
+                    <dd><b>.</b><a href="">我的投诉</a></dd>
+                </dl>
+            </div>
+        </div>
+        <!-- 左侧导航菜单 end -->
+
+        <!-- 右侧内容区域 start -->
+        <div class="content fl ml10">
+            <div class="address_hd">
+                <h3>收货地址薄</h3>
+                <foreach name="addresses" item="address">
+                    <dl id="add_{$address.id}">
+                        <dt>{$key+1}.{$address.name} {$address.pname} {$address.cname} {$address.aname} {$address.detail_address} {$address.tel} </dt>
+                        <dd>
+                            <a href="javascript:;" class="modify_add" data="{$address.id}">修改</a>
+                            <a href="">删除</a>
+                            <a href="">设为默认地址</a>
+                        </dd>
+                    </dl>
+                </foreach>
+            </div>
+
+            <div class="address_bd mt10">
+                <h4>新增/修改收货地址</h4>
+                <form action="" name="address_form" id="address_form">
+                    <ul>
+                        <li>
+                            <label for=""><span>*</span>收 货 人：</label>
+                            <input type="text" name="name" class="txt" />
+                        </li>
+                        <li>
+                            <label for=""><span>*</span>所在地区：</label>
+                            {:arr2select($provinces,'id','name','province_id')}
+
+                            <select name="city_id" class="city_id">
+                                <option value="">请选择</option>
+                            </select>
+
+                            <select name="area_id" class="area_id">
+                                <option value="">请选择</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for=""><span>*</span>详细地址：</label>
+                            <input type="text" name="detail_address" class="txt address"  />
+                        </li>
+                        <li>
+                            <label for=""><span>*</span>手机号码：</label>
+                            <input type="text" name="tel" class="txt" />
+                        </li>
+                        <li>
+                            <label for="">&nbsp;</label>
+                            <input type="checkbox" name="is_default" class="check" />设为默认地址
+                        </li>
+                        <li>
+                            <label for="">&nbsp;</label>
+                            <input type="submit" id="save_address" name="" class="btn" value="保存" />
+                        </li>
+                    </ul>
+                </form>
+            </div>	
+
+        </div>
+        <!-- 右侧内容区域 end -->
+    </div>
+    <!-- 页面主体 end-->
+</block>
+
+<block name='js'>
+    <js href='__JS__/home.js' />
+    <script type="text/javascript">
+        $(function() {
+            $('.province_id').change(function() {
+                var pid = $(this).val();
+                if (pid > 0) {
+                    var url = '{:U("getChildrenByParentId")}';
+                    var data = {parent_id: pid};
+                    //将数据清空，保留请选择
+                    $('.city_id').get(0).length = 1;
+                    $('.area_id').get(0).length = 1;
+                    $.getJSON(url, data, function(response) {
+                        $(response).each(function(key, value) {
+                            html = '<option value="' + value.id + '">' + value.name + '</option>';
+                            $(html).appendTo($('.city_id'));
+                        });
+//                                $('.city').html(html);
+
+                    });
+                }
+            });
+
+            $('.city_id').change(function() {
+                var pid = $(this).val();
+                if (pid > 0) {
+                    var url = '{:U("getChildrenByParentId")}';
+                    var data = {parent_id: pid};
+                    //将数据清空，保留请选择
+                    $('.area_id').get(0).length = 1;
+                    $.getJSON(url, data, function(response) {
+                        $(response).each(function(key, value) {
+                            html = '<option value="' + value.id + '">' + value.name + '</option>';
+                            $(html).appendTo($('.area_id'));
+                        });
+
+                    });
+                }
+            });
+
+            $('#save_address').click(function() {
+                //搜集所有数据
+//                var data = $('#address_form').serialize();
+                var data = {
+                    name: $(':input[name=name]').val(),
+                    province_id: $('.province_id option:selected').val(),
+                    pname:  $('.province_id option:selected').text(),
+                    city_id:$('.city_id option:selected').val(),
+                    cname:$('.city_id option:selected').text(),
+                    area_id :$('.area_id option:selected').val(),
+                    aname:$('.area_id option:selected').text(),
+                    detail_address:$(':input[name=detail_address]').val(),
+                    tel:$(':input[name=tel]').val(),
+                    is_default: $(':input[name=is_default]:checked').val()?1:0,
+                };
+                $.post('{:U("Address/add")}',data,function(response){
+                    console.debug(response);
+                    //判断是否成功，如果成功了，就将这条记录放到上面的列表中，如果失败了，什么都不做
+                    if(response.status){
+                        form_address_add(response.info);
+                        //重置表单
+                        $('#address_form').get(0).reset();
+                    }
+                },"json");
+                return false;
+            });
+            
+            
+            function form_address_add(id){
+                //取出收货人
+                var name = $(':input[name=name]').val();
+                //取出省份
+                var pname = $('.province_id option:selected').text();
+                //取出城市
+                var cname = $('.city_id option:selected').text();
+                //取出地区
+                var aname = $('.area_id option:selected').text();
+                //取出详细地址
+                var detail_address = $(':input[name=detail_address]').val();
+                //取出手机号码
+                var tel = $(':input[name=tel]').val();
+                //取出是否默认
+                var is_default = $(':input[name=is_default]:checked').val();
+                
+                //需要先知道有多少个地址在展示
+                var index = $('.address_hd').find('dt').length + 1;
+                
+                var html = '<dl><dt>' + index + '.' + name + ' ' + pname + ' ' + cname + ' ' + aname + ' ' + detail_address + ' ' + tel + '</dt>';
+                html += '<dd>';
+                html += '<a href="javascript:;" class="modify_add" data="'+id+'">修改</a> ';
+                html += '<a href="">删除</a> ';
+                if(!is_default){
+                    html += '<a href="">设为默认地址</a>';
+                }
+                html += '</dd></dl>';
+                $(html).appendTo($('.address_hd'));
+            }
+            
+            $('.address_hd').on('click','.modify_add',function(){
+                var address_id = $(this).attr('data');
+                var url = '{:U("Address/getAddInfo")}';
+                var data = {address_id:address_id};
+                $.getJSON(url,data,function(response){
+                    console.debug(response)
+                });
+            });
+        });
+    </script>
+</block>

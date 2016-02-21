@@ -22,8 +22,12 @@ $(function(){
 		$(".col5 span").each(function(){
 			total += parseFloat($(this).text());
 		});
-
 		$("#total").text(total.toFixed(2));
+                
+                //更新购物车中的商品的数量信息
+                var goods_id =  $(this).parent().find(".amount").attr('gid');
+                var amount = $(amount).val();
+                sync_car(goods_id,amount);
 	});
 
 	//增加
@@ -40,6 +44,11 @@ $(function(){
 		});
 
 		$("#total").text(total.toFixed(2));
+                
+                //更新购物车中的商品的数量信息
+                var goods_id =  $(this).parent().find(".amount").attr('gid');
+                var amount = $(amount).val();
+                sync_car(goods_id,amount);
 	});
 
 	//直接输入
@@ -58,6 +67,45 @@ $(function(){
 		});
 
 		$("#total").text(total.toFixed(2));
+                
+                
+                //更新购物车中的商品的数量信息
+                var goods_id =  $(this).attr('gid');
+                var amount = $(this).val();
+                sync_car(goods_id,amount);
 
 	});
+        
+        $('.remove_goods').click(function(){
+                //找到当前删除商品的商品id
+                var grand_ele = $(this).parent().parent();
+                var goods_id = grand_ele.find('.amount').attr('gid');
+                var amount = 0;
+                sync_car(goods_id,amount);
+                //删除dom节点
+                grand_ele.remove();
+            
+            
+                //总计金额
+		var total = 0;
+		$(".col5 span").each(function(){
+			total += parseFloat($(this).text());
+		});
+
+		$("#total").text(total.toFixed(2));
+                
+                
+                
+        });
+        
+        console.debug(sync_car_url);
+        
+        /**
+         * 同步商品数量
+         * @returns {undefined}
+         */
+        function sync_car(goods_id,amount){
+            var data = {goods_id:goods_id,amount:amount};
+            $.getJSON(sync_car_url,data);
+        }
 });

@@ -28,7 +28,6 @@
 			<thead>
 				<tr>
 					<th class="col1">商品名称</th>
-					<th class="col2">商品信息</th>
 					<th class="col3">单价</th>
 					<th class="col4">数量</th>	
 					<th class="col5">小计</th>
@@ -36,32 +35,37 @@
 				</tr>
 			</thead>
 			<tbody>
+                        <foreach name="car_list.goods_list" item="goods">
 				<tr>
-					<td class="col1"><a href=""><img src="__IMG__/cart_goods1.jpg" alt="" /></a>  <strong><a href="">【1111购物狂欢节】惠JackJones杰克琼斯纯羊毛菱形格</a></strong></td>
-					<td class="col2"> <p>颜色：073深红</p> <p>尺码：170/92A/S</p> </td>
-					<td class="col3">￥<span>499.00</span></td>
+					<td class="col1"><a href=""><img src="{$goods.logo}-min" alt="" /></a>  <strong><a href="">{$goods.name}</a></strong></td>
+					<td class="col3">￥<span>{$goods.shop_price}</span></td>
 					<td class="col4"> 
 						<a href="javascript:;" class="reduce_num"></a>
-						<input type="text" name="amount" value="1" class="amount"/>
+						<input type="text" name="amount" value="{$goods.amount}" gid="{$goods.id}" class="amount"/>
 						<a href="javascript:;" class="add_num"></a>
 					</td>
-					<td class="col5">￥<span>499.00</span></td>
-					<td class="col6"><a href="">删除</a></td>
+					<td class="col5">￥<span>{$goods.sub_total}</span></td>
+					<td class="col6"><a class="remove_goods" href="javascript:;">删除</a></td>
 				</tr>
+                        </foreach>
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="6">购物金额总计： <strong>￥ <span id="total">1870.00</span></strong></td>
+					<td colspan="6">购物金额总计： <strong>￥ <span id="total">{$car_list.total_price}</span></strong></td>
 				</tr>
 			</tfoot>
 		</table>
 		<div class="cart_btn w990 bc mt10">
 			<a href="" class="continue">继续购物</a>
-			<a href="" class="checkout">结 算</a>
+			<a href="{:U('flow2')}" class="checkout">结 算</a>
 		</div>
 	</div>
 	<!-- 主体部分 end -->
 </block>
 <block name="js">
     <js href="__JS__/cart1.js"/>
+    
+    <script type="text/javascript">
+        var sync_car_url = '{:U("ShoppingCar/syncCar")}';
+    </script>
 </block>

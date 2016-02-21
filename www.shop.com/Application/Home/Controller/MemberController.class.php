@@ -75,7 +75,8 @@ class MemberController extends \Think\Controller {
             $model = D('Member');
             $flag = $model->login();
             if ($flag) {
-                $this->success('登录成功',U('Index/index'));
+                $url = cookie('__forward__')?cookie('__forward__'):U('Index/index');
+                $this->success('登录成功',$url);
                 return;
             }else{
                 $this->error(get_errors($model->getError()));
