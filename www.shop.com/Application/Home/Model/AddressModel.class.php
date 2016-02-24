@@ -14,6 +14,10 @@ namespace Home\Model;
  * @author kunx
  */
 class AddressModel extends \Think\Model{
+    /**
+     * 获取用户的地址列表
+     * @return type
+     */
     public function getAddList(){
         $userinfo = is_login();
         $member_id = $userinfo['id'];
@@ -33,4 +37,9 @@ class AddressModel extends \Think\Model{
             return false;
         }
     }
+    
+    public function getAddInfo($address_id){
+       return $this->find($address_id);
+    }
+    
 }

@@ -158,6 +158,7 @@ class ShoppingCarModel extends \Think\Model {
             $car = cookie_shopping_car();
         }
         $total_price = 0;
+        $goods_num = 0;
         if($car){
             //取出各商品的详细信息
             $goods_ids = array_keys($car);
@@ -172,6 +173,7 @@ class ShoppingCarModel extends \Think\Model {
                 $item['sub_total'] = my_number_format($item['shop_price'] * $item['amount']);
                 $total_price += $item['sub_total'];
                 $data[$goods_id] = $item;
+                $goods_num += $amount;
             }
             $total_price = my_number_format($total_price);
         } else{
@@ -179,7 +181,8 @@ class ShoppingCarModel extends \Think\Model {
         }
         $data = array(
             'total_price'=>$total_price,
-            'goods_list'=>$data
+            'goods_list'=>$data,
+            'goods_num'=>$goods_num,
         );
         return $data;
     }
@@ -187,6 +190,17 @@ class ShoppingCarModel extends \Think\Model {
     public function syncCar($goods_id,$amount){
         $car = array('goods_id'=>$goods_id,'amount'=>$amount);
         $this->addCar($car,true);
+    }
+    
+    /**
+     * 清空购物车
+     * @param type $member_id
+     * @return type
+     */
+    public function flushCar(){
+        $userinfo = is_login();
+        $member_id = $userinfo['id'];
+        return $this->where(array('member_id'=>$member_id))->delete();
     }
 
     

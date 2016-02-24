@@ -47,7 +47,7 @@
             <div class="address_hd">
                 <h3>收货地址薄</h3>
                 <foreach name="addresses" item="address">
-                    <dl id="add_{$address.id}">
+                    <dl id="{$address.id}">
                         <dt>{$key+1}.{$address.name} {$address.pname} {$address.cname} {$address.aname} {$address.detail_address} {$address.tel} </dt>
                         <dd>
                             <a href="javascript:;" class="modify_add" data="{$address.id}">修改</a>
@@ -110,6 +110,12 @@
         $(function() {
             $('.province_id').change(function() {
                 var pid = $(this).val();
+                get_city_list(pid);
+            });
+
+
+            //获取市级城市列表
+            function get_city_list(pid){
                 if (pid > 0) {
                     var url = '{:U("getChildrenByParentId")}';
                     var data = {parent_id: pid};
@@ -125,13 +131,19 @@
 
                     });
                 }
+            }
+            
+            
+            
+            $('.city_id').change(function() {
+                var cid = $(this).val();
+                get_area_list(cid);
             });
 
-            $('.city_id').change(function() {
-                var pid = $(this).val();
-                if (pid > 0) {
+            function get_area_list(cid){
+                if (cid > 0) {
                     var url = '{:U("getChildrenByParentId")}';
-                    var data = {parent_id: pid};
+                    var data = {parent_id: cid};
                     //将数据清空，保留请选择
                     $('.area_id').get(0).length = 1;
                     $.getJSON(url, data, function(response) {
@@ -142,7 +154,7 @@
 
                     });
                 }
-            });
+            }
 
             $('#save_address').click(function() {
                 //搜集所有数据
@@ -206,10 +218,61 @@
                 var address_id = $(this).attr('data');
                 var url = '{:U("Address/getAddInfo")}';
                 var data = {address_id:address_id};
+                var index = $('.address_hd dl').index($('#'+address_id));
+                console.debug(index,address_id);
                 $.getJSON(url,data,function(response){
-                    console.debug(response)
+//                    get_city_list(response.province_id);
+//                    get_area_list(response.city_id);
+//                    
+//                    //在表单中回显
+//                    //取出收货人
+//                    var name = $(':input[name=name]').val(response.name);
+//                    //取出省份
+//                    var pname = $('.province_id').val([response.province_id]);
+//                    $('.province_id option:selected').change();
+//                    
+//                    //取出城市
+//                    var cname = $('.city_id').val([response.city_id]);
+//                    
+//                    //取出地区
+//                    var aname = $('.area_id').val([response.area_id]);
+//                    //取出详细地址
+//                    var detail_address = $(':input[name=detail_address]').val(response.detail_address);
+//                    //取出手机号码
+//                    var tel = $(':input[name=tel]').val(response.tel);
+//                    //取出是否默认
+//                    var is_default = $(':input[name=is_default]:checked').val([response.is_default]);
+//                    
+//                    
+//                    
+//                    
+//                    return;
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    console.debug(response)
+//                    var html = '<dt>' + index + '.' + response.name + ' ' + response.pname + ' ' + response.cname + ' ' + response.aname + ' ' + response.detail_address + ' ' + response.tel + '</dt>';
+//                    html += '<dd>';
+//                    html += '<a href="javascript:;" class="modify_add" data="'+response.id+'">修改</a> ';
+//                    html += '<a href="">删除</a> ';
+//                    if(!response.is_default){
+//                        html += '<a href="">设为默认地址</a>';
+//                    }
+//                    html += '</dd>';
+//                    $(html).appendTo($('.address_hd'));
+//                    
                 });
             });
+            
+            
+            
         });
     </script>
 </block>

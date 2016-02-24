@@ -26,7 +26,11 @@ class AddressController extends \Think\Controller{
         $this->error('添加失败');
     }
     
+    /**
+     * 返回一个地址的详细记录，json格式
+     * @param type $address_id
+     */
     public function getAddInfo($address_id){
-        $this->ajaxReturn(D('Address')->find($address_id));
+        $this->ajaxReturn(D('Address')->getAddInfo($address_id));
     }
 }
