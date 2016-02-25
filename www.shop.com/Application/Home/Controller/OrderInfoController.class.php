@@ -21,4 +21,14 @@ class OrderInfoController extends \Think\Controller{
         $this->success('收货完成，请评价',U('index'));
         
     }
+    
+    
+    public function deleteTimeoutOrder(){
+        $model = D('OrderInfo');
+        if($model->deleteTimeoutOrder() !== false){
+            echo 'success';
+        }else{
+            echo 'failed';
+        }
+    }
 }

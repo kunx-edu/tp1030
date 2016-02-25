@@ -22,8 +22,7 @@ class OrderInfoModel extends \Think\Model {
         3  => '交易完成',
         -1 => '已取消',
     );
-    
-    private $shopping_car,$address_info;
+    private $shopping_car, $address_info;
 
     /**
      * 添加订单。
@@ -37,40 +36,82 @@ class OrderInfoModel extends \Think\Model {
         $this->startTrans();
         $this->setShareData($request_data['address_id']);
 
+        /**
+         * 解决并发问题
+         * 使用redis锁
+         */
+        if ($this->checkLock() === false) {
+            $this->rollback();
+            return false;
+        }
 
         /**
          * 减库存
          */
-        if($this->updateStock()===false){
+        if ($this->updateStock() === false) {
             $this->rollback();
+            $this->freeLock();
             return false;
         }
 
         //开发票
         if (($invoice_sn = $this->invoiceHandler($request_data)) === false) {
             $this->rollback();
+            $this->freeLock();
             return false;
         }
 
         //插入基本订单信息
         if (($order_info_id = $this->orderInfoHandler($invoice_sn, $request_data)) === false) {
             $this->rollback();
+            $this->freeLock();
             return false;
         }
 
         //插入订单详情
         if ($this->orderInfoItemHandler($order_info_id) === false) {
             $this->rollback();
+            $this->freeLock();
             return false;
         }
 
         //清空购物车
         if (D('ShoppingCar')->flushCar() === false) {
             $this->rollback();
+            $this->freeLock();
             return false;
         }
         $this->commit();
+        $this->freeLock();
         return true;
+    }
+
+    /**
+     * redis锁
+     */
+    private function checkLock() {
+        $redis = get_redis();
+        for ($i = 0; $i < 3; ++$i) {
+            if ($redis->sIsMember(1)) {
+                //尝试了三次，都没有解锁，就不在继续，直接返回false
+                if ($i == 2) {
+                    return false;
+                }
+                sleep(1);
+            } else {
+                $redis->sadd('lock_stock', 1);
+                break;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 释放锁
+     */
+    private function freeLock() {
+        $redis = get_redis();
+        $redis->sRem('lock_stock', 1);
     }
 
     /**
@@ -81,42 +122,56 @@ class OrderInfoModel extends \Think\Model {
         $this->shopping_car = D('ShoppingCar')->getCar();
         $this->address_info = D('Address')->getAddInfo($address_id);
     }
-    
+
     /**
      * 更新库存
      */
-    private function updateStock(){
+    private function updateStock() {
         $shopping_car = $this->shopping_car;
-        $goods_ids = array();
-        $update_data = array();
-        foreach($shopping_car as $item){
-            $goods_ids[] = $item['goods_id'];
-            $update_data[] = array(
-                'id'=>$item['goods_id'],
-                'stock'=>array('exp','stock-'.$item['amount']),
-            );
-        }
+        $goods_ids    = array();
+        $update_data  = array();
+        $goods_ids    = array_keys($this->shopping_car['goods_list']);
         //查询数据库中商品的库存
-        $goods_model = D('Goods');
-        $cond = array(
-            'id'=>array('in',$goods_ids),
-            'stock'=>array('lt',1),
+        $goods_model  = D('Goods');
+        $cond         = array(
+            'id' => array('in', $goods_ids),
         );
         /**
          * 判断是否有库存不够的商品
          */
-        if($goods_model->where($cond)->count()){
-            return false;
-        }else{
-            /**
-             * 库存都够，就逐个执行修改库存操作，发现失败，直接返回false
-             */
-            foreach ($update_data as $row){
-                if($goods_model->save($row)===false){
-                    return false;
-                }
+        /**
+         * 取得每个商品的库存
+         */
+        $stocks       = $goods_model->field('id,stock')->where($cond)->select();
+        foreach ($stocks as $goods) {
+            //检查非法库存
+            if ($goods['stock'] < 1) {
+                return false;
             }
+            //加锁
+            if ($this->checkLock($goods['id']) === false) {
+                return false;
+            }
+            $row = array(
+                'id'    => $goods['id'],
+                'stock' => array('exp', 'stock-' . $this->shopping_car['goods_list'][$goods['id']]['amount']),
+            );
+            //更新
+            if ($goods_model->save($row) === false) {
+                $this->freeLock($goods['id']);
+                return false;
+            }
+            //释放锁
+            $this->freeLock($goods['id']);
         }
+//        /**
+//         * 库存都够，就逐个执行修改库存操作，发现失败，直接返回false
+//         */
+//        foreach ($update_data as $row) {
+//            if ($goods_model->save($row) === false) {
+//                return false;
+//            }
+//        }
         return true;
     }
 
@@ -274,19 +329,30 @@ class OrderInfoModel extends \Think\Model {
         $order_list = $this->where(array('member_id' => $userinfo['id']))->select();
         foreach ($order_list as $key => $item) {
             $item['goods_list'] = D('OrderInfoItem')->field('goods_name,goods_id,logo')->where(array('order_info_id' => $item['id']))->select();
-            $item['status_str']     = self::$statuses[$item['status']];
+            $item['status_str'] = self::$statuses[$item['status']];
             $order_list[$key]   = $item;
         }
         return $order_list;
     }
-    
-    public function doPay($sn){
-        return $this->where(array('sn'=>$sn))->setField('status',1);
+
+    public function doPay($sn) {
+        return $this->where(array('sn' => $sn))->setField('status', 1);
     }
-    
-    
-    public function receive($sn){
-        return $this->where(array('sn'=>$sn))->setField('status',3);
+
+    public function receive($sn) {
+        return $this->where(array('sn' => $sn))->setField('status', 3);
+    }
+
+    /**
+     * 删除超时未支付的订单
+     * @return type
+     */
+    public function deleteTimeoutOrder() {
+        $cond = array(
+            'inputtime' => array('exp', '+900<' . time()),
+            'status'=>0,
+        );
+        return $this->where($cond)->setField('status',-1);//删除已超时的订单
     }
 
 }

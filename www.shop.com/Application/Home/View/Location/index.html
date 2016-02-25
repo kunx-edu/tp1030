@@ -92,6 +92,7 @@
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
+                            <input type="hidden" name="id" value="" id="address_id"/>
                             <input type="submit" id="save_address" name="" class="btn" value="保存" />
                         </li>
                     </ul>
@@ -115,7 +116,7 @@
 
 
             //获取市级城市列表
-            function get_city_list(pid){
+            function get_city_list(pid) {
                 if (pid > 0) {
                     var url = '{:U("getChildrenByParentId")}';
                     var data = {parent_id: pid};
@@ -132,15 +133,15 @@
                     });
                 }
             }
-            
-            
-            
+
+
+
             $('.city_id').change(function() {
                 var cid = $(this).val();
                 get_area_list(cid);
             });
 
-            function get_area_list(cid){
+            function get_area_list(cid) {
                 if (cid > 0) {
                     var url = '{:U("getChildrenByParentId")}';
                     var data = {parent_id: cid};
@@ -158,33 +159,32 @@
 
             $('#save_address').click(function() {
                 //搜集所有数据
-//                var data = $('#address_form').serialize();
                 var data = {
                     name: $(':input[name=name]').val(),
                     province_id: $('.province_id option:selected').val(),
-                    pname:  $('.province_id option:selected').text(),
-                    city_id:$('.city_id option:selected').val(),
-                    cname:$('.city_id option:selected').text(),
-                    area_id :$('.area_id option:selected').val(),
-                    aname:$('.area_id option:selected').text(),
-                    detail_address:$(':input[name=detail_address]').val(),
-                    tel:$(':input[name=tel]').val(),
-                    is_default: $(':input[name=is_default]:checked').val()?1:0,
+                    pname: $('.province_id option:selected').text(),
+                    city_id: $('.city_id option:selected').val(),
+                    cname: $('.city_id option:selected').text(),
+                    area_id: $('.area_id option:selected').val(),
+                    aname: $('.area_id option:selected').text(),
+                    detail_address: $(':input[name=detail_address]').val(),
+                    tel: $(':input[name=tel]').val(),
+                    is_default: $(':input[name=is_default]:checked').val() ? 1 : 0,
+                    id: $('#address_id').val(),
                 };
-                $.post('{:U("Address/add")}',data,function(response){
-                    console.debug(response);
+                $.post('{:U("Address/add")}', data, function(response) {
                     //判断是否成功，如果成功了，就将这条记录放到上面的列表中，如果失败了，什么都不做
-                    if(response.status){
+                    if (response.status) {
                         form_address_add(response.info);
                         //重置表单
                         $('#address_form').get(0).reset();
                     }
-                },"json");
+                }, "json");
                 return false;
             });
-            
-            
-            function form_address_add(id){
+
+
+            function form_address_add(id) {
                 //取出收货人
                 var name = $(':input[name=name]').val();
                 //取出省份
@@ -199,80 +199,90 @@
                 var tel = $(':input[name=tel]').val();
                 //取出是否默认
                 var is_default = $(':input[name=is_default]:checked').val();
-                
+
                 //需要先知道有多少个地址在展示
-                var index = $('.address_hd').find('dt').length + 1;
-                
-                var html = '<dl><dt>' + index + '.' + name + ' ' + pname + ' ' + cname + ' ' + aname + ' ' + detail_address + ' ' + tel + '</dt>';
+                var ele_id = '#' + id;
+                if($(ele_id).index()>0) {
+                    var index = $(ele_id).index();
+                }else{
+                    var index = $('.address_hd').find('dt').length + 1;
+                }
+
+                var html = '<dl id="'+id+'"><dt>' + index + '.' + name + ' ' + pname + ' ' + cname + ' ' + aname + ' ' + detail_address + ' ' + tel + '</dt>';
                 html += '<dd>';
-                html += '<a href="javascript:;" class="modify_add" data="'+id+'">修改</a> ';
+                html += '<a href="javascript:;" class="modify_add" data="' + id + '">修改</a> ';
                 html += '<a href="">删除</a> ';
-                if(!is_default){
+                if (!is_default) {
                     html += '<a href="">设为默认地址</a>';
                 }
                 html += '</dd></dl>';
-                $(html).appendTo($('.address_hd'));
+                //看是否是修改
+                if($(ele_id).index()>0) {
+                    $('#'+id).replaceWith(html);
+                }else{
+                    $(html) .appendTo($('.address_hd'));
+                }
             }
-            
-            $('.address_hd').on('click','.modify_add',function(){
+/**
+ * 根据address_id取得地址详细信息
+ * 
+ * 根据地址详细信息中的省级id，取得市级列表，并选中市级
+ * 根据详细信息中的市级id，取得地区列表，并选中地区
+ */
+
+            $('.address_hd').on('click', '.modify_add', function() {
                 var address_id = $(this).attr('data');
                 var url = '{:U("Address/getAddInfo")}';
-                var data = {address_id:address_id};
-                var index = $('.address_hd dl').index($('#'+address_id));
-                console.debug(index,address_id);
-                $.getJSON(url,data,function(response){
-//                    get_city_list(response.province_id);
-//                    get_area_list(response.city_id);
-//                    
-//                    //在表单中回显
-//                    //取出收货人
-//                    var name = $(':input[name=name]').val(response.name);
-//                    //取出省份
-//                    var pname = $('.province_id').val([response.province_id]);
-//                    $('.province_id option:selected').change();
-//                    
-//                    //取出城市
-//                    var cname = $('.city_id').val([response.city_id]);
-//                    
-//                    //取出地区
-//                    var aname = $('.area_id').val([response.area_id]);
-//                    //取出详细地址
-//                    var detail_address = $(':input[name=detail_address]').val(response.detail_address);
-//                    //取出手机号码
-//                    var tel = $(':input[name=tel]').val(response.tel);
-//                    //取出是否默认
-//                    var is_default = $(':input[name=is_default]:checked').val([response.is_default]);
-//                    
-//                    
-//                    
-//                    
-//                    return;
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    console.debug(response)
-//                    var html = '<dt>' + index + '.' + response.name + ' ' + response.pname + ' ' + response.cname + ' ' + response.aname + ' ' + response.detail_address + ' ' + response.tel + '</dt>';
-//                    html += '<dd>';
-//                    html += '<a href="javascript:;" class="modify_add" data="'+response.id+'">修改</a> ';
-//                    html += '<a href="">删除</a> ';
-//                    if(!response.is_default){
-//                        html += '<a href="">设为默认地址</a>';
-//                    }
-//                    html += '</dd>';
-//                    $(html).appendTo($('.address_hd'));
-//                    
+                var data = {address_id: address_id};
+                var index = $('.address_hd dl').index($('#' + address_id));
+                //获取地址详细信息
+                $.getJSON(url, data, function(response) {
+                    var add_info = response;
+                    var url = '{:U("getChildrenByParentId")}';
+                    var data = {parent_id: add_info.province_id};
+                    //选择省级
+                    $('.province_id').val([add_info.province_id]);
+                    //将数据清空，保留请选择
+                    $('.city_id').get(0).length = 1;
+                    $('.area_id').get(0).length = 1;
+                    //取得市级列表
+                    $.getJSON(url, data, function(response) {
+                        $(response).each(function(key, value) {
+                            html = '<option value="' + value.id + '">' + value.name + '</option>';
+                            $(html).appendTo($('.city_id'));
+                        });
+                        $('.city_id').val([add_info.city_id]);
+
+                        var data = {parent_id: add_info.city_id};
+                        //将数据清空，保留请选择
+                        //获取地区列表
+                        $.getJSON(url, data, function(response) {
+                            $(response).each(function(key, value) {
+                                html = '<option value="' + value.id + '">' + value.name + '</option>';
+                                $(html).appendTo($('.area_id'));
+                            });
+
+                            $('.area_id').val([add_info.area_id]);
+                        });
+
+                    }
+                    );
+                    //在表单中回显
+                    //取出收货人
+                    $(':input[name=name]').val(add_info.name);
+                    //取出详细地址
+                    $(':input[name=detail_address]').val(add_info.detail_address);
+                    //取出手机号码
+                    $(':input[name=tel]').val(add_info.tel);
+                    //取出是否默认
+                    if(add_info.is_default == 1){
+                        $(':input[name=is_default]').prop('checked',true);
+                    }else{
+                        $(':input[name=is_default]').prop('checked',false);
+                    }
                 });
+                $('#address_id').val(address_id);
             });
-            
-            
-            
         });
     </script>
 </block>
