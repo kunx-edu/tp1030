@@ -22,7 +22,13 @@ class OrderInfoModel extends \Think\Model {
         3  => '交易完成',
         -1 => '已取消',
     );
+    
+    private $shopping_car,$address_info;
 
+    /**
+     * 添加订单。
+     * @return boolean
+     */
     public function addOrder() {
 
         //获取数据
@@ -32,7 +38,13 @@ class OrderInfoModel extends \Think\Model {
         $this->setShareData($request_data['address_id']);
 
 
-
+        /**
+         * 减库存
+         */
+        if($this->updateStock()===false){
+            $this->rollback();
+            return false;
+        }
 
         //开发票
         if (($invoice_sn = $this->invoiceHandler($request_data)) === false) {
@@ -68,6 +80,44 @@ class OrderInfoModel extends \Think\Model {
     private function setShareData($address_id) {
         $this->shopping_car = D('ShoppingCar')->getCar();
         $this->address_info = D('Address')->getAddInfo($address_id);
+    }
+    
+    /**
+     * 更新库存
+     */
+    private function updateStock(){
+        $shopping_car = $this->shopping_car;
+        $goods_ids = array();
+        $update_data = array();
+        foreach($shopping_car as $item){
+            $goods_ids[] = $item['goods_id'];
+            $update_data[] = array(
+                'id'=>$item['goods_id'],
+                'stock'=>array('exp','stock-'.$item['amount']),
+            );
+        }
+        //查询数据库中商品的库存
+        $goods_model = D('Goods');
+        $cond = array(
+            'id'=>array('in',$goods_ids),
+            'stock'=>array('lt',1),
+        );
+        /**
+         * 判断是否有库存不够的商品
+         */
+        if($goods_model->where($cond)->count()){
+            return false;
+        }else{
+            /**
+             * 库存都够，就逐个执行修改库存操作，发现失败，直接返回false
+             */
+            foreach ($update_data as $row){
+                if($goods_model->save($row)===false){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
